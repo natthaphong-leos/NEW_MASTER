@@ -1,0 +1,497 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E796B263-8ED3-47B4-8F6E-75AB1BA64FF4}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <StartupObject>Sub Main</StartupObject>
+    <RootNamespace>Project</RootNamespace>
+    <AssemblyName>SCADA MASTER</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>WindowsFormsWithCustomSubMain</MyType>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>SCADA MASTER.xml</DocumentationFile>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</NoWarn>
+    <WarningsAsErrors>
+    </WarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>SCADA MASTER.xml</DocumentationFile>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</NoWarn>
+    <WarningsAsErrors>
+    </WarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>Off</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>On</OptionInfer>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\SmartFeedmill.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AxInterop.ActUtlTypeLib">
+      <HintPath>C:\MELSEC\Act\Samples\Vb.NET\Sample\Sample\bin\Debug\AxInterop.ActUtlTypeLib.dll</HintPath>
+    </Reference>
+    <Reference Include="CheckHardlock, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DLL\CheckHardlock.dll</HintPath>
+    </Reference>
+    <Reference Include="ctrlAnalog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\MQTT\CtrlAnalog\ctrlAnalog\bin\Debug\ctrlAnalog.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Charts.v19.2.Core, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Dashboard.v19.2.Core, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Dashboard.v19.2.Win, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Data.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.DataAccess.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.DataAccess.v19.2.UI, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Map.v19.2.Core, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Office.v19.2.Core, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.PivotGrid.v19.2.Core, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Printing.v19.2.Core, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.RichEdit.v19.2.Core, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Sparkline.v19.2.Core, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.TreeMap.v19.2.Core, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Utils.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Utils.v19.2.UI, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Xpo.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraBars.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraCharts.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraCharts.v19.2.UI, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraCharts.v19.2.Wizard, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraEditors.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraGauges.v19.2.Core, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraGauges.v19.2.Presets, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraGauges.v19.2.Win, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraGrid.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraLayout.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraMap.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraPivotGrid.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraPrinting.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraReports.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraRichEdit.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraTreeList.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraTreeMap.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="hasp_net_windows, Version=7.9.22426.60000, Culture=neutral, PublicKeyToken=56120be447701319, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DLL\hasp_net_windows.dll</HintPath>
+    </Reference>
+    <Reference Include="Line, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\DLL_TAT\Line.dll</HintPath>
+    </Reference>
+    <Reference Include="M2Mqtt.Net">
+      <HintPath>C:\Windows\SysWOW64\M2Mqtt.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="MQTT_CTRL_OTHERDEVICE, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DLL\MQTT_CTRL_OTHERDEVICE.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="TAT_CtrlAlarm, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DLL\TAT_CtrlAlarm.dll</HintPath>
+    </Reference>
+    <Reference Include="TAT_CtrlBin, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DLL\TAT_CtrlBin.dll</HintPath>
+    </Reference>
+    <Reference Include="TAT_CtrlRoute, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DLL\TAT_CtrlRoute.dll</HintPath>
+    </Reference>
+    <Reference Include="TAT_CtrlSelector, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DLL\TAT_CtrlSelector.dll</HintPath>
+    </Reference>
+    <Reference Include="TAT_MQTT_CTRL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DLL\TAT_MQTT_CTRL.dll</HintPath>
+    </Reference>
+    <Reference Include="TAT_UTILITY_CTRL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DLL\TAT_UTILITY_CTRL.dll</HintPath>
+    </Reference>
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Data" />
+    <Import Include="System.Drawing" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Windows.Forms" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Xml.Linq" />
+    <Import Include="System.Threading.Tasks" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Class\clsUiInputGuard.vb" />
+    <Compile Include="Class\Class_Tcp.vb" />
+    <Compile Include="Class\clsDB.vb" />
+    <Compile Include="Class\clsIO.vb" />
+    <Compile Include="Class\clsMqttHeartbeatMonitor.vb" />
+    <Compile Include="Class\clsRoute.vb" />
+    <Compile Include="Class\clsTest_IO.vb" />
+    <Compile Include="Class\clsVerifyObject.vb" />
+    <Compile Include="Class\Cls_Hasp.vb" />
+    <Compile Include="Class\cls_MXComponent_RQ.vb" />
+    <Compile Include="Class\cls_MXCompronent.vb" />
+    <Compile Include="Class\cls_scada_Control.vb" />
+    <Compile Include="From\Alarm_Des.designer.vb">
+      <DependentUpon>Alarm_Des.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\Alarm_Des.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="From\frmAlarm_Description.Designer.vb">
+      <DependentUpon>frmAlarm_Description.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\frmAlarm_Description.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="From\frmClosing.Designer.vb">
+      <DependentUpon>frmClosing.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\frmClosing.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="From\frmConfig_Line.designer.vb">
+      <DependentUpon>frmConfig_Line.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\frmConfig_Line.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="From\frmConfirmTest.Designer.vb">
+      <DependentUpon>frmConfirmTest.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\frmConfirmTest.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="From\frmMenu_Motor.designer.vb">
+      <DependentUpon>frmMenu_Motor.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\frmMenu_Motor.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="From\frmMxComponent.Designer.vb">
+      <DependentUpon>frmMxComponent.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\frmMxComponent.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="From\frmProgressInsert.Designer.vb">
+      <DependentUpon>frmProgressInsert.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\frmProgressInsert.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="From\frmTestResult.Designer.vb">
+      <DependentUpon>frmTestResult.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\frmTestResult.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="From\Frm_ComponentMX.designer.vb">
+      <DependentUpon>Frm_ComponentMX.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\Frm_ComponentMX.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="From\frm_login.designer.vb">
+      <DependentUpon>frm_login.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\frm_login.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="From\frm_Page_1.Designer.vb">
+      <DependentUpon>frm_Page_1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\frm_Page_1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Class\iniFile.vb" />
+    <Compile Include="From\frm_Page_2.Designer.vb">
+      <DependentUpon>frm_Page_2.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\frm_Page_2.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="From\frm_production_time.Designer.vb">
+      <DependentUpon>frm_production_time.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\frm_production_time.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="From\MDI_FRM.Designer.vb">
+      <DependentUpon>MDI_FRM.vb</DependentUpon>
+    </Compile>
+    <Compile Include="From\MDI_FRM.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LineManage\clsTATLine.vb" />
+    <Compile Include="LineManage\frmLineProperties.Designer.vb">
+      <DependentUpon>frmLineProperties.vb</DependentUpon>
+    </Compile>
+    <Compile Include="LineManage\frmLineProperties.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LineManage\mdlLineFunction.vb" />
+    <Compile Include="LineManage\mdlLineParameter.vb" />
+    <Compile Include="LineManage\mdlSaveLine.vb" />
+    <Compile Include="Mdl_MQTT\mdlMenu.vb" />
+    <Compile Include="Mdl_MQTT\mdlUtilityService.vb" />
+    <Compile Include="Mdl_MQTT\MQTT_Structure.vb" />
+    <Compile Include="Module\mdlAsyncLoad.vb" />
+    <Compile Include="Module\mdlLanguage.vb" />
+    <Compile Include="Module\mdlParameter.vb" />
+    <Compile Include="Module\mdlShowLine.vb" />
+    <Compile Include="Module\mdlTest_IO.vb" />
+    <Compile Include="Module\mdlWindowsLog.vb" />
+    <Compile Include="Module\mdlPermission.vb" />
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="OTHER\LOAD.designer.vb">
+      <DependentUpon>LOAD.vb</DependentUpon>
+    </Compile>
+    <Compile Include="OTHER\LOAD.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="From\Alarm_Des.resx">
+      <DependentUpon>Alarm_Des.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="From\frmAlarm_Description.resx">
+      <DependentUpon>frmAlarm_Description.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="From\frmClosing.resx">
+      <DependentUpon>frmClosing.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="From\frmConfig_Line.resx">
+      <DependentUpon>frmConfig_Line.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="From\frmConfirmTest.resx">
+      <DependentUpon>frmConfirmTest.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="From\frmMenu_Motor.resx">
+      <DependentUpon>frmMenu_Motor.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="From\frmMxComponent.resx">
+      <DependentUpon>frmMxComponent.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="From\frmProgressInsert.resx">
+      <DependentUpon>frmProgressInsert.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="From\frmTestResult.resx">
+      <DependentUpon>frmTestResult.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="From\Frm_ComponentMX.resx">
+      <DependentUpon>Frm_ComponentMX.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="From\frm_login.resx">
+      <DependentUpon>frm_login.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="From\frm_Page_1.resx">
+      <DependentUpon>frm_Page_1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="From\frm_Page_2.resx">
+      <DependentUpon>frm_Page_2.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="From\frm_production_time.resx">
+      <DependentUpon>frm_production_time.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="From\MDI_FRM.resx">
+      <DependentUpon>MDI_FRM.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LineManage\frmLineProperties.resx">
+      <DependentUpon>frmLineProperties.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\licenses.licx" />
+    <EmbeddedResource Include="OTHER\LOAD.resx">
+      <DependentUpon>LOAD.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="My Project\app.manifest" />
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Resources\SYS_WarningTriangle.png" />
+    <None Include="Resources\SmartFeedmill.ico" />
+    <None Include="Resources\UI_Apply_16x16.png" />
+    <None Include="Resources\UI_Play_16x16.png" />
+    <None Include="Resources\UI_Stop_16x16.png" />
+    <None Include="Resources\UI_GaugeStyleHalfCircular_16x16.png" />
+    <None Include="Resources\UI_GaugeShowCaptions_16x16.png" />
+    <None Include="Resources\UI_Refresh_16x16.png" />
+    <None Include="Resources\UI_Cancel_16x16.png" />
+    <None Include="Resources\UI_Redo_16x16.png" />
+    <None Include="Resources\UI_Reading_16x16.png" />
+    <None Include="Resources\UI_Edit_16x16.png" />
+    <None Include="Resources\UI_Delete_16x16.png" />
+    <None Include="Resources\UI_DocumentMap_16x16.png" />
+    <None Include="Resources\UI_GaugeStyleFullCircular_16x16.png" />
+    <None Include="Resources\UI_Forward_16x16.png" />
+    <None Include="Resources\UI_TouchMode_16x16.png" />
+    <None Include="Resources\UI_Technology_16x16.png" />
+    <None Include="Resources\UI_Recurrence_16x16.png" />
+    <None Include="Resources\UI_SolidGreenDataBar_16x16.png" />
+    <None Include="Resources\UI_SolidOrangeDataBar_16x16.png" />
+    <None Include="Resources\UI_GaugeStyleRightQuarterCircular_32x32.png" />
+    <None Include="Resources\UI_GaugeStyleLinearVertical_16x16.png" />
+    <None Include="Resources\UI_GaugeStyleLinearHorizontal_16x16.png" />
+    <None Include="Resources\UI_GaugeStyleThreeForthCircular_16x16.png" />
+    <None Include="Resources\UI_PageSetup_16x16.png" />
+    <None Include="Resources\UI_Next_16x16.png" />
+    <None Include="Resources\UI_MoveUp_16x16.png" />
+    <None Include="Resources\UI_MoveDown_16x16.png" />
+    <None Include="Resources\BG_MainScada.jpg" />
+    <None Include="Resources\UI_SetRedToBlack_16x16.png" />
+    <None Include="Resources\UI_LoginPassword_30x30.png" />
+    <None Include="Resources\UI_LoginUser_30x30.png" />
+    <None Include="Resources\LOGO_SmartBatching.png" />
+    <None Include="Resources\SYS_MDI_BinCode.png" />
+    <None Include="Resources\SYS_MDI_Exit.png" />
+    <None Include="Resources\SYS_MDI_Extend.png" />
+    <None Include="Resources\SYS_MDI_ProductionTime.png" />
+    <None Include="Resources\SYS_MDI_JobAssgnment.png" />
+    <None Include="Resources\SYS_MDI_Page.png" />
+    <None Include="Resources\SYS_MDI_Login.png" />
+    <None Include="Resources\SYS_MDI_Logout.png" />
+    <None Include="Resources\SYS_MDI_MotorCode.png" />
+    <None Include="Resources\SYS_AlarmIcon_256x256.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="ACTSUPPORTLib">
+      <Guid>{5713F094-6F4A-11D5-9315-009099244EFD}</Guid>
+      <VersionMajor>3</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="ActUtlTypeLib">
+      <Guid>{D217E54E-4A26-4A76-B0AB-57166B90F9AF}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="AxActUtlTypeLib">
+      <Guid>{D217E54E-4A26-4A76-B0AB-57166B90F9AF}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
