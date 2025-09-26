@@ -25,6 +25,17 @@ Partial Class frm_Page_2
         Me.components = New System.ComponentModel.Container()
         Me.Label42 = New System.Windows.Forms.Label()
         Me.Label34 = New System.Windows.Forms.Label()
+        Me.btn_remote = New System.Windows.Forms.Button()
+        Me.BW_LOAD = New System.ComponentModel.BackgroundWorker()
+        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.BW_ReadPLC = New System.ComponentModel.BackgroundWorker()
+        Me.ContextMenuSTartBatch = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.StartBatchToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
+        Me.Timer_Run = New System.Windows.Forms.Timer(Me.components)
+        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.Timer_Micro = New System.Windows.Forms.Timer(Me.components)
+        Me.Timer_Line = New System.Windows.Forms.Timer(Me.components)
         Me.pnlLine = New System.Windows.Forms.Panel()
         Me.Label36 = New System.Windows.Forms.Label()
         Me.Label35 = New System.Windows.Forms.Label()
@@ -40,22 +51,11 @@ Partial Class frm_Page_2
         Me.btnHide_Control = New System.Windows.Forms.Button()
         Me.btnLineManage = New System.Windows.Forms.Button()
         Me.pnlTest_IO = New System.Windows.Forms.Panel()
-        Me.Label2 = New System.Windows.Forms.Label()
         Me.btnVerify = New System.Windows.Forms.Button()
-        Me.btn_remote = New System.Windows.Forms.Button()
-        Me.BW_LOAD = New System.ComponentModel.BackgroundWorker()
-        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.BW_ReadPLC = New System.ComponentModel.BackgroundWorker()
-        Me.ContextMenuSTartBatch = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.StartBatchToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
-        Me.Timer_Run = New System.Windows.Forms.Timer(Me.components)
-        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.Timer_Micro = New System.Windows.Forms.Timer(Me.components)
-        Me.Timer_Line = New System.Windows.Forms.Timer(Me.components)
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.ContextMenuSTartBatch.SuspendLayout()
         Me.pnlLine.SuspendLayout()
         Me.pnlTest_IO.SuspendLayout()
-        Me.ContextMenuSTartBatch.SuspendLayout()
         Me.SuspendLayout()
         '
         'Label42
@@ -82,9 +82,60 @@ Partial Class frm_Page_2
         Me.Label34.TabIndex = 21721
         Me.Label34.Text = "MM1FAF01"
         '
+        'btn_remote
+        '
+        Me.btn_remote.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btn_remote.Font = New System.Drawing.Font("Tahoma", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(222, Byte))
+        Me.btn_remote.Location = New System.Drawing.Point(1769, 10)
+        Me.btn_remote.Name = "btn_remote"
+        Me.btn_remote.Size = New System.Drawing.Size(141, 33)
+        Me.btn_remote.TabIndex = 27301
+        Me.btn_remote.Text = "REMOTE CONTROL"
+        Me.btn_remote.UseVisualStyleBackColor = True
+        '
+        'BW_ReadPLC
+        '
+        '
+        'ContextMenuSTartBatch
+        '
+        Me.ContextMenuSTartBatch.ImageScalingSize = New System.Drawing.Size(24, 24)
+        Me.ContextMenuSTartBatch.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.StartBatchToolStripMenuItem, Me.ToolStripSeparator1})
+        Me.ContextMenuSTartBatch.Name = "ContextMenuSTartBatch"
+        Me.ContextMenuSTartBatch.Size = New System.Drawing.Size(116, 32)
+        '
+        'StartBatchToolStripMenuItem
+        '
+        Me.StartBatchToolStripMenuItem.Name = "StartBatchToolStripMenuItem"
+        Me.StartBatchToolStripMenuItem.Size = New System.Drawing.Size(115, 22)
+        Me.StartBatchToolStripMenuItem.Text = "Validate"
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(112, 6)
+        '
+        'Timer_Run
+        '
+        Me.Timer_Run.Interval = 500
+        '
+        'Timer1
+        '
+        Me.Timer1.Enabled = True
+        Me.Timer1.Interval = 1000
+        '
+        'Timer_Micro
+        '
+        Me.Timer_Micro.Enabled = True
+        Me.Timer_Micro.Interval = 3000
+        '
+        'Timer_Line
+        '
+        Me.Timer_Line.Enabled = True
+        Me.Timer_Line.Interval = 500
+        '
         'pnlLine
         '
-        Me.pnlLine.BackColor = System.Drawing.Color.Transparent
+        Me.pnlLine.BackColor = System.Drawing.Color.Black
         Me.pnlLine.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.pnlLine.Controls.Add(Me.Label36)
         Me.pnlLine.Controls.Add(Me.Label35)
@@ -99,7 +150,7 @@ Partial Class frm_Page_2
         Me.pnlLine.Controls.Add(Me.btnDrawLine)
         Me.pnlLine.Controls.Add(Me.btnHide_Control)
         Me.pnlLine.Font = New System.Drawing.Font("Tahoma", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.pnlLine.Location = New System.Drawing.Point(1211, 965)
+        Me.pnlLine.Location = New System.Drawing.Point(1064, 10)
         Me.pnlLine.Name = "pnlLine"
         Me.pnlLine.Size = New System.Drawing.Size(699, 105)
         Me.pnlLine.TabIndex = 27305
@@ -226,9 +277,9 @@ Partial Class frm_Page_2
         '
         'btnLineManage
         '
-        Me.btnLineManage.Location = New System.Drawing.Point(1642, 934)
+        Me.btnLineManage.Location = New System.Drawing.Point(1769, 105)
         Me.btnLineManage.Name = "btnLineManage"
-        Me.btnLineManage.Size = New System.Drawing.Size(265, 23)
+        Me.btnLineManage.Size = New System.Drawing.Size(141, 23)
         Me.btnLineManage.TabIndex = 27304
         Me.btnLineManage.Text = "OPEN LINE MANAGEMENT MODE"
         Me.btnLineManage.UseVisualStyleBackColor = True
@@ -237,13 +288,22 @@ Partial Class frm_Page_2
         '
         Me.pnlTest_IO.BackColor = System.Drawing.Color.Transparent
         Me.pnlTest_IO.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.pnlTest_IO.Controls.Add(Me.Label2)
         Me.pnlTest_IO.Controls.Add(Me.btnVerify)
-        Me.pnlTest_IO.Location = New System.Drawing.Point(1738, 871)
+        Me.pnlTest_IO.Controls.Add(Me.Label2)
+        Me.pnlTest_IO.Location = New System.Drawing.Point(1769, 49)
         Me.pnlTest_IO.Name = "pnlTest_IO"
-        Me.pnlTest_IO.Size = New System.Drawing.Size(173, 57)
+        Me.pnlTest_IO.Size = New System.Drawing.Size(141, 52)
         Me.pnlTest_IO.TabIndex = 27303
         Me.pnlTest_IO.Visible = False
+        '
+        'btnVerify
+        '
+        Me.btnVerify.Location = New System.Drawing.Point(2, 25)
+        Me.btnVerify.Name = "btnVerify"
+        Me.btnVerify.Size = New System.Drawing.Size(136, 23)
+        Me.btnVerify.TabIndex = 25448
+        Me.btnVerify.Text = "VERIFY"
+        Me.btnVerify.UseVisualStyleBackColor = True
         '
         'Label2
         '
@@ -253,70 +313,10 @@ Partial Class frm_Page_2
         Me.Label2.Font = New System.Drawing.Font("Tahoma", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label2.Location = New System.Drawing.Point(0, 0)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(171, 23)
+        Me.Label2.Size = New System.Drawing.Size(139, 23)
         Me.Label2.TabIndex = 25449
         Me.Label2.Text = "TEST I/O MODE"
         Me.Label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'btnVerify
-        '
-        Me.btnVerify.Location = New System.Drawing.Point(3, 26)
-        Me.btnVerify.Name = "btnVerify"
-        Me.btnVerify.Size = New System.Drawing.Size(165, 23)
-        Me.btnVerify.TabIndex = 25448
-        Me.btnVerify.Text = "VERIFY"
-        Me.btnVerify.UseVisualStyleBackColor = True
-        '
-        'btn_remote
-        '
-        Me.btn_remote.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.btn_remote.Font = New System.Drawing.Font("Tahoma", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(222, Byte))
-        Me.btn_remote.Location = New System.Drawing.Point(1769, 10)
-        Me.btn_remote.Name = "btn_remote"
-        Me.btn_remote.Size = New System.Drawing.Size(141, 33)
-        Me.btn_remote.TabIndex = 27301
-        Me.btn_remote.Text = "REMOTE CONTROL"
-        Me.btn_remote.UseVisualStyleBackColor = True
-        '
-        'BW_ReadPLC
-        '
-        '
-        'ContextMenuSTartBatch
-        '
-        Me.ContextMenuSTartBatch.ImageScalingSize = New System.Drawing.Size(24, 24)
-        Me.ContextMenuSTartBatch.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.StartBatchToolStripMenuItem, Me.ToolStripSeparator1})
-        Me.ContextMenuSTartBatch.Name = "ContextMenuSTartBatch"
-        Me.ContextMenuSTartBatch.Size = New System.Drawing.Size(116, 32)
-        '
-        'StartBatchToolStripMenuItem
-        '
-        Me.StartBatchToolStripMenuItem.Name = "StartBatchToolStripMenuItem"
-        Me.StartBatchToolStripMenuItem.Size = New System.Drawing.Size(115, 22)
-        Me.StartBatchToolStripMenuItem.Text = "Validate"
-        '
-        'ToolStripSeparator1
-        '
-        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(112, 6)
-        '
-        'Timer_Run
-        '
-        Me.Timer_Run.Interval = 500
-        '
-        'Timer1
-        '
-        Me.Timer1.Enabled = True
-        Me.Timer1.Interval = 1000
-        '
-        'Timer_Micro
-        '
-        Me.Timer_Micro.Enabled = True
-        Me.Timer_Micro.Interval = 3000
-        '
-        'Timer_Line
-        '
-        Me.Timer_Line.Enabled = True
-        Me.Timer_Line.Interval = 500
         '
         'frm_Page_2
         '
@@ -325,7 +325,7 @@ Partial Class frm_Page_2
         Me.BackColor = System.Drawing.Color.DimGray
         Me.BackgroundImage = Global.Project.My.Resources.Resources.BG_MainScada
         Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
-        Me.ClientSize = New System.Drawing.Size(1920, 1080)
+        Me.ClientSize = New System.Drawing.Size(1920, 1061)
         Me.Controls.Add(Me.pnlLine)
         Me.Controls.Add(Me.btnLineManage)
         Me.Controls.Add(Me.pnlTest_IO)
@@ -336,15 +336,26 @@ Partial Class frm_Page_2
         Me.MaximizeBox = False
         Me.Name = "frm_Page_2"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.Manual
+        Me.ContextMenuSTartBatch.ResumeLayout(False)
         Me.pnlLine.ResumeLayout(False)
         Me.pnlLine.PerformLayout()
         Me.pnlTest_IO.ResumeLayout(False)
-        Me.ContextMenuSTartBatch.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
     Friend WithEvents Label42 As Label
     Friend WithEvents Label34 As Label
+    Public WithEvents btn_remote As Button
+    Friend WithEvents BW_LOAD As System.ComponentModel.BackgroundWorker
+    Friend WithEvents ToolTip1 As ToolTip
+    Friend WithEvents BW_ReadPLC As System.ComponentModel.BackgroundWorker
+    Friend WithEvents ContextMenuSTartBatch As ContextMenuStrip
+    Friend WithEvents StartBatchToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
+    Public WithEvents Timer_Run As Timer
+    Public WithEvents Timer1 As Timer
+    Friend WithEvents Timer_Micro As Timer
+    Friend WithEvents Timer_Line As Timer
     Friend WithEvents pnlLine As Panel
     Friend WithEvents Label36 As Label
     Friend WithEvents Label35 As Label
@@ -360,17 +371,6 @@ Partial Class frm_Page_2
     Friend WithEvents btnHide_Control As Button
     Friend WithEvents btnLineManage As Button
     Friend WithEvents pnlTest_IO As Panel
-    Friend WithEvents Label2 As Label
     Friend WithEvents btnVerify As Button
-    Public WithEvents btn_remote As Button
-    Friend WithEvents BW_LOAD As System.ComponentModel.BackgroundWorker
-    Friend WithEvents ToolTip1 As ToolTip
-    Friend WithEvents BW_ReadPLC As System.ComponentModel.BackgroundWorker
-    Friend WithEvents ContextMenuSTartBatch As ContextMenuStrip
-    Friend WithEvents StartBatchToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
-    Public WithEvents Timer_Run As Timer
-    Public WithEvents Timer1 As Timer
-    Friend WithEvents Timer_Micro As Timer
-    Friend WithEvents Timer_Line As Timer
+    Friend WithEvents Label2 As Label
 End Class

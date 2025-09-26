@@ -225,6 +225,35 @@ Public Class frm_Page_1
     End Sub
 #End Region
 #Region "DRAW LINE" '======== ADD BY APICHAT FOR DRAW LINE
+    '============ MOVE PANEL DRAW LINE : BY NATTHAPHONG
+    Private isDragging As Boolean = False
+    Private startPoint As Point
+
+    Private Sub pnlLine_MouseDown(sender As Object, e As MouseEventArgs) Handles pnlLine.MouseDown
+        If e.Button = MouseButtons.Left Then
+            isDragging = True
+            ' เก็บตำแหน่งเมาส์ตอนเริ่มลาก
+            startPoint = e.Location
+        End If
+    End Sub
+
+    Private Sub pnlLine_MouseMove(sender As Object, e As MouseEventArgs) Handles pnlLine.MouseMove
+        If isDragging Then
+            ' คำนวณตำแหน่งใหม่ของ Panel จากตำแหน่งเมาส์ที่ขยับ
+            Dim p As Point = pnlLine.Location
+            p.X += e.X - startPoint.X
+            p.Y += e.Y - startPoint.Y
+            pnlLine.Location = p
+        End If
+    End Sub
+
+    Private Sub pnlLine_MouseUp(sender As Object, e As MouseEventArgs) Handles pnlLine.MouseUp
+        If e.Button = MouseButtons.Left Then
+            isDragging = False
+        End If
+    End Sub
+    '============ 
+
     Private Sub btnEditLine_Click(sender As Object, e As EventArgs)
         If Line_EditMode = True Then
             Line_EditMode = False

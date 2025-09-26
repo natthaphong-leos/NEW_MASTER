@@ -109,9 +109,9 @@ Partial Class frm_Page_1
         '
         'btnVerify
         '
-        Me.btnVerify.Location = New System.Drawing.Point(3, 26)
+        Me.btnVerify.Location = New System.Drawing.Point(2, 25)
         Me.btnVerify.Name = "btnVerify"
-        Me.btnVerify.Size = New System.Drawing.Size(165, 23)
+        Me.btnVerify.Size = New System.Drawing.Size(136, 23)
         Me.btnVerify.TabIndex = 25448
         Me.btnVerify.Text = "VERIFY"
         Me.btnVerify.UseVisualStyleBackColor = True
@@ -120,11 +120,11 @@ Partial Class frm_Page_1
         '
         Me.pnlTest_IO.BackColor = System.Drawing.Color.Transparent
         Me.pnlTest_IO.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.pnlTest_IO.Controls.Add(Me.Label1)
         Me.pnlTest_IO.Controls.Add(Me.btnVerify)
-        Me.pnlTest_IO.Location = New System.Drawing.Point(1738, 871)
+        Me.pnlTest_IO.Controls.Add(Me.Label1)
+        Me.pnlTest_IO.Location = New System.Drawing.Point(1769, 49)
         Me.pnlTest_IO.Name = "pnlTest_IO"
-        Me.pnlTest_IO.Size = New System.Drawing.Size(173, 57)
+        Me.pnlTest_IO.Size = New System.Drawing.Size(141, 52)
         Me.pnlTest_IO.TabIndex = 25449
         Me.pnlTest_IO.Visible = False
         '
@@ -136,14 +136,14 @@ Partial Class frm_Page_1
         Me.Label1.Font = New System.Drawing.Font("Tahoma", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label1.Location = New System.Drawing.Point(0, 0)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(171, 23)
+        Me.Label1.Size = New System.Drawing.Size(139, 23)
         Me.Label1.TabIndex = 25449
         Me.Label1.Text = "TEST I/O MODE"
         Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'pnlLine
         '
-        Me.pnlLine.BackColor = System.Drawing.Color.Transparent
+        Me.pnlLine.BackColor = System.Drawing.Color.Black
         Me.pnlLine.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.pnlLine.Controls.Add(Me.Label36)
         Me.pnlLine.Controls.Add(Me.Label35)
@@ -158,7 +158,7 @@ Partial Class frm_Page_1
         Me.pnlLine.Controls.Add(Me.btnDrawLine)
         Me.pnlLine.Controls.Add(Me.btnHide_Control)
         Me.pnlLine.Font = New System.Drawing.Font("Tahoma", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.pnlLine.Location = New System.Drawing.Point(1211, 965)
+        Me.pnlLine.Location = New System.Drawing.Point(1064, 10)
         Me.pnlLine.Name = "pnlLine"
         Me.pnlLine.Size = New System.Drawing.Size(699, 105)
         Me.pnlLine.TabIndex = 27300
@@ -245,9 +245,9 @@ Partial Class frm_Page_1
         '
         'btnLineManage
         '
-        Me.btnLineManage.Location = New System.Drawing.Point(1642, 934)
+        Me.btnLineManage.Location = New System.Drawing.Point(1769, 105)
         Me.btnLineManage.Name = "btnLineManage"
-        Me.btnLineManage.Size = New System.Drawing.Size(265, 23)
+        Me.btnLineManage.Size = New System.Drawing.Size(141, 23)
         Me.btnLineManage.TabIndex = 27299
         Me.btnLineManage.Text = "OPEN LINE MANAGEMENT MODE"
         Me.btnLineManage.UseVisualStyleBackColor = True
@@ -299,7 +299,7 @@ Partial Class frm_Page_1
         Me.BackColor = System.Drawing.Color.DimGray
         Me.BackgroundImage = Global.Project.My.Resources.Resources.BG_MainScada
         Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
-        Me.ClientSize = New System.Drawing.Size(1920, 1080)
+        Me.ClientSize = New System.Drawing.Size(1920, 1061)
         Me.Controls.Add(Me.pnlLine)
         Me.Controls.Add(Me.btnLineManage)
         Me.Controls.Add(Me.pnlTest_IO)
