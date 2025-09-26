@@ -792,6 +792,7 @@ Partial Class MDI_FRM
         Me.Controls.Add(Me.lblIPComputer)
         Me.Controls.Add(Me.ToolStrip_Top)
         Me.Controls.Add(Me.MenuStrip)
+        Me.Enabled = False
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.IsMdiContainer = True

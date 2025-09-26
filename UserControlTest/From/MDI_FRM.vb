@@ -159,7 +159,9 @@ Public Class MDI_FRM
     End Sub
 
     Private Async Sub MDIParent1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.WindowState = FormWindowState.Maximized
         Try
+            Me.Enabled = False
             Await InitializeAsync().ConfigureAwait(True)
             ShowPagesAfterShown()
         Catch ex As Exception
@@ -186,40 +188,41 @@ Public Class MDI_FRM
                            Close_EXE()
                        End Sub)
 
-            Await Task.Run(Sub()
-                               Try
-                                   SafeInvoke(Sub() splash?.SetStatus("Record the program start event..."))
-                                   SafeInvoke(Sub() splash?.SetProgress(15))
+            Await Task.Run(
+                Sub()
+                    Try
+                        SafeInvoke(Sub() splash?.SetStatus("Record the program start event..."))
+                        SafeInvoke(Sub() splash?.SetProgress(15))
 
-                                   Dim strLogMsg As String =
+                        Dim strLogMsg As String =
                                        "Open Application " & vbCrLf &
                                        "NAME : " & Assembly.GetExecutingAssembly().GetName().Name & vbCrLf &
                                        "APPLICATION DATE : " & FileDateTime(Application.ExecutablePath) & vbCrLf &
                                        "PATH : " & Application.StartupPath
-                                   WriteToEventLog(strLogMsg, 1000, 1, EventLogEntryType.Information)
+                        WriteToEventLog(strLogMsg, 1000, 1, EventLogEntryType.Information)
 
-                                   ' UI text
-                                   SafeInvoke(Sub()
-                                                  splash?.SetStatus("Setup Components...")
-                                                  splash?.SetProgress(25)
+                        ' UI text
+                        SafeInvoke(Sub()
+                                       splash?.SetStatus("Setup Components...")
+                                       splash?.SetProgress(25)
 
-                                                  btn_PRODUCTION_TIME.Enabled = False
-                                                  btn_JOB_ASSIGNMENT.Enabled = False
-                                                  Me.Text = $"{Application.ProductName} [{Application.ProductVersion}] [{Application.CompanyName}] [{FileDateTime(Application.ExecutablePath)}]"
-                                                  Me.lblIPComputer.Text = "IP : " & GetIPAddress()
-                                              End Sub)
+                                       btn_PRODUCTION_TIME.Enabled = False
+                                       btn_JOB_ASSIGNMENT.Enabled = False
+                                       Me.Text = $"{Application.ProductName} [{Application.ProductVersion}] [{Application.CompanyName}] [{FileDateTime(Application.ExecutablePath)}]"
+                                       Me.lblIPComputer.Text = "IP : " & GetIPAddress()
+                                   End Sub)
 
-                                   ' Read config
-                                   SafeInvoke(Sub() splash?.SetStatus("Read Config..."))
-                                   MyConfigApp()
+                        ' Read config
+                        SafeInvoke(Sub() splash?.SetStatus("Read Config..."))
+                        MyConfigApp()
 
-                                   ' Connect DB
-                                   SafeInvoke(Sub()
-                                                  splash?.SetStatus("Connect to database...")
-                                                  splash?.SetProgress(45)
-                                              End Sub)
+                        ' Connect DB
+                        SafeInvoke(Sub()
+                                       splash?.SetStatus("Connect to database...")
+                                       splash?.SetProgress(45)
+                                   End Sub)
 
-                                   CnBatching = New clsDB(
+                        CnBatching = New clsDB(
                                        Batching_Conf.Name,
                                        Batching_Conf.User,
                                        Batching_Conf.Password,
@@ -227,87 +230,86 @@ Public Class MDI_FRM
                                        Batching_Conf.Connection_Type
                                    )
 
-                                   Dim testConnect As Boolean = CnBatching.TestConnection()
+                        Dim testConnect As Boolean = CnBatching.TestConnection()
 
-                                   Do While Not testConnect
-                                       Dim msg As String =
+                        Do While Not testConnect
+                            Dim msg As String =
                                            "Cannot connect to Database " & Batching_Conf.Name.ToUpperInvariant() & vbCrLf &
                                            "IP Address " & Batching_Conf.IPAddress & vbCrLf & vbCrLf &
                                            "Please check your network connection or the configuration file 'DB_Config' and try again." & vbCrLf & vbCrLf &
                                            "Press [OK] to exit, or [Cancel] to reconnect."
 
-                                       Dim result As DialogResult = DialogResult.None
+                            Dim result As DialogResult = DialogResult.None
 
-                                       SafeInvoke(Sub()
-                                                      Dim owner As IWin32Window = TryCast(splash, IWin32Window)
-                                                      If owner Is Nothing Then owner = Me
-                                                      result = MessageBox.Show(owner, msg,
+                            SafeInvoke(Sub()
+                                           Dim owner As IWin32Window = TryCast(splash, IWin32Window)
+                                           If owner Is Nothing Then owner = Me
+                                           result = MessageBox.Show(owner, msg,
                                                                                "Connection Database Error",
                                                                                MessageBoxButtons.OKCancel,
                                                                                MessageBoxIcon.[Error])
-                                                  End Sub)
+                                       End Sub)
 
-                                       If result = DialogResult.OK Then
-                                           SafeInvoke(Sub() ExitEndProcess())
-                                           Return
-                                       End If
+                            If result = DialogResult.OK Then
+                                SafeInvoke(Sub() ExitEndProcess())
+                                Return
+                            End If
 
-                                       testConnect = CnBatching.TestConnection()
-                                   Loop
+                            testConnect = CnBatching.TestConnection()
+                        Loop
 
-                                   ' I/O test
-                                   SafeInvoke(Sub()
-                                                  splash?.SetStatus("Load I/O test mode...")
-                                                  splash?.SetProgress(60)
-                                              End Sub)
-                                   func_get_mode_testIO(CnBatching)
-                                   func_get_Option_ConfirmtestIO(CnBatching)
+                        ' I/O test
+                        SafeInvoke(Sub()
+                                       splash?.SetStatus("Load I/O test mode...")
+                                       splash?.SetProgress(60)
+                                   End Sub)
+                        func_get_mode_testIO(CnBatching)
+                        func_get_Option_ConfirmtestIO(CnBatching)
 
-                                   ' Language
-                                   SafeInvoke(Sub()
-                                                  splash?.SetStatus("Load language...")
-                                                  splash?.SetProgress(70)
-                                              End Sub)
+                        ' Language
+                        SafeInvoke(Sub()
+                                       splash?.SetStatus("Load language...")
+                                       splash?.SetProgress(70)
+                                   End Sub)
 
-                                   structApp_Language = Get_LanguageConfig("MAIN_SCADA", CnBatching)
+                        structApp_Language = Get_LanguageConfig("MAIN_SCADA", CnBatching)
 
-                                   SafeInvoke(Sub()
-                                                  prepare_language_item(tsCboLanguage, CnBatching)
-                                                  tsCboLanguage.Text = structApp_Language.strLang_Main
-                                              End Sub)
+                        SafeInvoke(Sub()
+                                       prepare_language_item(tsCboLanguage, CnBatching)
+                                       tsCboLanguage.Text = structApp_Language.strLang_Main
+                                   End Sub)
 
-                                   ' Rendering
-                                   SafeInvoke(Sub()
-                                                  splash?.SetStatus("Rendering Objects...")
-                                                  splash?.SetProgress(80)
-                                              End Sub)
+                        ' Rendering
+                        SafeInvoke(Sub()
+                                       splash?.SetStatus("Rendering Objects...")
+                                       splash?.SetProgress(80)
+                                   End Sub)
 
-                                   io.writeLogEvent(Application.StartupPath, vbNewLine & vbNewLine & "##################################### START PROGRAM #####################################")
+                        io.writeLogEvent(Application.StartupPath, vbNewLine & vbNewLine & "##################################### START PROGRAM #####################################")
 
-                                   ' Icon + finalize UI
-                                   SafeInvoke(Sub()
-                                                  Me.Icon = My.Resources.SmartFeedmill
-                                                  tsCboLanguage.Text = structApp_Language.strLang_Main
-                                                  Close_EXE()
-                                                  splash?.SetProgress(90)
-                                              End Sub)
+                        ' Icon + finalize UI
+                        SafeInvoke(Sub()
+                                       Me.Icon = My.Resources.SmartFeedmill
+                                       tsCboLanguage.Text = structApp_Language.strLang_Main
+                                       Close_EXE()
+                                       splash?.SetProgress(90)
+                                   End Sub)
 
-                                   Threading.Thread.Sleep(200)
+                        ' Threading.Thread.Sleep(200)
 
-                               Catch ex As Exception
-                                   If Error_Check Then Return
-                                   Error_Check = True
+                    Catch ex As Exception
+                        If Error_Check Then Return
+                        Error_Check = True
 
-                                   Dim strMessage As String =
+                        Dim strMessage As String =
                                        "Error Number : " & Err.Number & " [" & Me.Name & "]" & vbNewLine &
                                        "Error Description : " & ex.Message & vbCrLf &
                                        "Error at : " & ex.StackTrace
 
-                                   Try : LogError.writeErr(strMessage) : Catch : End Try
-                                   Throw
-                               End Try
-                           End Sub).ConfigureAwait(True)
-
+                        Try : LogError.writeErr(strMessage) : Catch : End Try
+                        Throw
+                    End Try
+                End Sub).ConfigureAwait(True)
         Catch ex As Exception
             Throw
         End Try
@@ -422,7 +424,9 @@ Public Class MDI_FRM
         End Try
     End Sub
 #End Region
+
 #Region " >>> CUSTOM CALL/CLOSE EXE"
+
     Private ReadOnly lastOpenedExeNames_Other As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
 
     ' ROUTE ไม่ต้องเรียกผ่าน Custom_OpenApp Scada จะเรียกจาก Properties ของ control ใน frm
@@ -482,6 +486,7 @@ Public Class MDI_FRM
         End Try
     End Sub
 #End Region
+
 #Region "# GET ROUTE PROPERTIES"
     ' เก็บชื่อ exe ที่เปิดล่าสุด แยก Conveyer / Batching
     Private ReadOnly lastOpenedExeNames_Conveyer As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
@@ -565,7 +570,6 @@ Public Class MDI_FRM
         Return GetRouteNosFromForms(forms)
     End Function
 
-    ' ====== (ใส่กลับ) LOCATION utilities กัน error not declared ==================
     Private Function GetRouteLocationsFromForm(root As Control) As List(Of String)
         Dim results As New List(Of String)()
         Dim seen As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
@@ -573,13 +577,36 @@ Public Class MDI_FRM
         For Each c As ctrlRouteConveyer_ In Descendants(Of ctrlRouteConveyer_)(root)
             Try
                 Dim raw As String = c.mqtt_selectroute_config_.LOCATION
-                If Not String.IsNullOrWhiteSpace(raw) Then
+                If String.IsNullOrWhiteSpace(raw) Then Continue For
+
+                If Route_Batching_Status Then
+                    Dim token As String = raw.ToUpperInvariant()
+                    Dim sql As String =
+                    "SELECT TOP 1 station_name " &
+                    "FROM thaisia.motor_station " &
+                    "WHERE c_class = '" & token & "'"
+
+                    Dim dt As DataTable = CnRoute.ExecuteDataTable(sql)
+
+                    Dim toAdd As String = token
+                    If dt IsNot Nothing AndAlso dt.Rows.Count > 0 Then
+                        Dim locVal As Object = dt.Rows(0)("station_name")
+                        If locVal IsNot Nothing AndAlso locVal IsNot DBNull.Value Then
+                            Dim val As String = Convert.ToString(locVal)
+                            toAdd = val.Trim().Replace(" "c, "_"c).ToUpperInvariant()
+                        End If
+                    End If
+
+                    If toAdd.Length > 0 AndAlso seen.Add(toAdd) Then
+                        results.Add(toAdd)
+                    End If
+                Else
                     Dim token As String = raw.Trim().Replace(" "c, "_"c).ToUpperInvariant()
-                    If token.Length > 0 AndAlso Not seen.Contains(token) Then
-                        seen.Add(token)
+                    If token.Length > 0 AndAlso seen.Add(token) Then
                         results.Add(token)
                     End If
                 End If
+
             Catch ex As Exception
                 Try : LogError.writeErr("GetRouteLocationsFromForm: " & ex.Message) : Catch : End Try
             End Try
@@ -590,19 +617,10 @@ Public Class MDI_FRM
 
     Private Function BuildLocationPipeListFromForm(root As Control) As String
         Dim items As List(Of String) = GetRouteLocationsFromForm(root)
-
-        If Route_Batching_Status Then
-
-        Else
-            If items Is Nothing OrElse items.Count = 0 Then Return String.Empty
-            Return "|" & String.Join("|", items) & "|"
-        End If
+        If items Is Nothing OrElse items.Count = 0 Then Return String.Empty
+        Return "|" & String.Join("|", items) & "|"
     End Function
 
-    ' ==============================================================================
-
-
-    ' --------- EXE name สำหรับ Conveyer / Batching ----------
     Private Function NormalizeRouteToken(routeNo As String) As String
         If String.IsNullOrWhiteSpace(routeNo) Then Return Nothing
         Dim r As String = routeNo.Trim()
@@ -624,12 +642,10 @@ Public Class MDI_FRM
         Return EXE_PREFIX & core & EXE_SUFFIX_BATCHING
     End Function
 
-    ' โค้ดเก่าที่เรียก BuildExeNameFromRoute ยังใช้ได้ — map ไป Conveyer
     Private Function BuildExeNameFromRoute(routeNo As String) As String
         Return BuildExeNameFromRoute_Conveyer(routeNo)
     End Function
 
-    ' รวมชุดชื่อ exe ทั้งฝั่ง batching / conveyer จาก routeNos
     Private Function BuildExeNamesFromRoutes(routeNos As IEnumerable(Of String), ByVal isBatching As Boolean) As HashSet(Of String)
         Dim hs As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
         For Each rn As String In routeNos
@@ -640,7 +656,6 @@ Public Class MDI_FRM
         Return hs
     End Function
 
-    ' --------- สร้าง argument รูปแบบเดิม ----------
     Private Function BuildRouteParam(routeNo As String) As String
         If String.IsNullOrWhiteSpace(routeNo) Then Return String.Empty
         Dim token As String = routeNo
@@ -724,6 +739,124 @@ Public Class MDI_FRM
     Private isExtendMode As Boolean = False
     Private ReadOnly Frm_arr_extend() As Form = {frm_Page_1, frm_Page_2}
 
+    ' === NEW: จำว่าตอนนี้กำลัง extend ไปที่จอไหน (-1 = ไม่ได้ extend) ===
+    Private extendScreenIndex As Integer = -1
+
+    ' === NEW: หา index ของจอ primary ปัจจุบัน ===
+    Private Function GetPrimaryScreenIndex() As Integer
+        Dim all As Screen() = Screen.AllScreens   ' <<< ต้องใส่ As Screen()
+        For i As Integer = 0 To all.Length - 1
+            If all(i).Primary Then Return i
+        Next
+        Return 0
+    End Function
+
+    ' === NEW: จัดวางฟอร์มสองหน้าให้พอดีกับตำแหน่งจอจริง ===
+    Private Sub LayoutForExtend(primaryForm As Form, extendForm As Form)
+        If extendScreenIndex < 0 OrElse extendScreenIndex >= Screen.AllScreens.Length Then Exit Sub
+
+        Dim all As Screen() = Screen.AllScreens   ' <<< ใส่ type ให้เหมือนกัน
+        Dim primaryScreen As Screen = all(GetPrimaryScreenIndex())
+        Dim extendScreen As Screen = all(extendScreenIndex)
+
+        ' รวมกรอบของสองจอเป็นพื้นที่เดียว
+        Dim unionBounds As Rectangle = Rectangle.Union(primaryScreen.Bounds, extendScreen.Bounds)
+
+        ' ตั้งค่า MDI parent ให้กินพื้นที่ union ทั้งหมด
+        Me.StartPosition = FormStartPosition.Manual
+        Me.WindowState = FormWindowState.Normal
+        Me.Bounds = unionBounds
+
+        ' map ตำแหน่งจอให้กลายเป็นตำแหน่งภายใน union (0,0)
+        Dim priLoc As New Point(primaryScreen.Bounds.X - unionBounds.X, primaryScreen.Bounds.Y - unionBounds.Y)
+        Dim extLoc As New Point(extendScreen.Bounds.X - unionBounds.X, extendScreen.Bounds.Y - unionBounds.Y)
+        Dim priSize As Size = primaryScreen.Bounds.Size
+        Dim extSize As Size = extendScreen.Bounds.Size
+
+        ' set MDI child ทั้งสอง
+        For Each f As Form In New Form() {primaryForm, extendForm}
+            If f IsNot Nothing AndAlso Not f.IsDisposed Then
+                f.MdiParent = Me
+                f.StartPosition = FormStartPosition.Manual
+                f.WindowState = FormWindowState.Normal
+            End If
+        Next
+
+        With primaryForm
+            .Location = priLoc
+            .Size = priSize
+            .Show()
+            .BringToFront()
+        End With
+
+        With extendForm
+            .Location = extLoc
+            .Size = extSize
+            .Show()
+            .BringToFront()
+        End With
+
+        isExtendMode = True
+    End Sub
+
+    Public Async Sub SelectP1()
+        If tsIntakeP2.Visible = True Then
+            tsIntakeP1.Enabled = False
+            tsIntakeP2.Enabled = False
+
+            ' หน่วงเวลา
+            Await Task.Delay(1000)
+
+            If numberofmonitors > 1 AndAlso isExtendMode AndAlso HasSecondPage() AndAlso extendScreenIndex >= 0 Then
+                ' === แก้: วาง P1 ที่จอ primary และ P2 ที่จอ extend (ไม่ว่า extend จะอยู่ซ้าย/ขวา/บน/ล่าง) ===
+                LayoutForExtend(frm_Page_1, frm_Page_2)
+            Else
+                ' โหมดปกติ: แสดงหน้าเดียว
+                frm_Page_2.Hide()
+
+                frm_Page_1.MdiParent = Me
+                frm_Page_1.StartPosition = FormStartPosition.Manual
+                frm_Page_1.WindowState = FormWindowState.Normal
+                frm_Page_1.Location = New Point(0, 0)
+                frm_Page_1.Size = Me.ClientSize
+                frm_Page_1.Show()
+                frm_Page_1.BringToFront()
+            End If
+
+            tsIntakeP1.Enabled = True
+            tsIntakeP2.Enabled = True
+        End If
+    End Sub
+
+    Public Async Sub SelectP2()
+        If tsIntakeP1.Visible = True Then
+            tsIntakeP1.Enabled = False
+            tsIntakeP2.Enabled = False
+
+            ' หน่วงเวลา
+            Await Task.Delay(1000)
+
+            If numberofmonitors > 1 AndAlso isExtendMode AndAlso HasSecondPage() AndAlso extendScreenIndex >= 0 Then
+                ' === แก้: วาง P2 ที่จอ primary และ P1 ที่จอ extend (สลับกันกรณีเลือกหน้า 2 เป็นหลัก) ===
+                LayoutForExtend(frm_Page_2, frm_Page_1)
+            Else
+                ' โหมดปกติ: แสดงหน้าเดียว
+                frm_Page_1.Hide()
+
+                frm_Page_2.MdiParent = Me
+                frm_Page_2.StartPosition = FormStartPosition.Manual
+                frm_Page_2.WindowState = FormWindowState.Normal
+                frm_Page_2.Location = New Point(0, 0)
+                frm_Page_2.Size = Me.ClientSize
+                frm_Page_2.Show()
+                frm_Page_2.BringToFront()
+            End If
+
+            tsIntakeP1.Enabled = True
+            tsIntakeP2.Enabled = True
+        End If
+    End Sub
+
     Private Function HasSecondPage() As Boolean
         Try
             Return (tsIntakeP2 IsNot Nothing AndAlso tsIntakeP2.Visible AndAlso
@@ -749,6 +882,7 @@ Public Class MDI_FRM
 
     Private Sub ExitExtendMode()
         isExtendMode = False
+        extendScreenIndex = -1 ' === reset ===
 
         If Frm_arr_extend IsNot Nothing Then
             For i As Integer = 0 To Frm_arr_extend.Length - 1
@@ -778,6 +912,7 @@ Public Class MDI_FRM
             f0.Show()
             f0.BringToFront()
         End If
+        Me.WindowState = FormWindowState.Maximized
     End Sub
 
     Private Sub ExtendMonitorToScreen(selectedIndex As Integer)
@@ -792,46 +927,11 @@ Public Class MDI_FRM
         Dim extendScreen As Screen = Screen.AllScreens(selectedIndex)
         If primaryScreen.DeviceName = extendScreen.DeviceName Then Return
 
-        Dim unionBounds As Rectangle = Rectangle.Union(primaryScreen.Bounds, extendScreen.Bounds)
+        ' === เก็บ index ไว้ใช้กับ SelectP1/SelectP2 ===
+        extendScreenIndex = selectedIndex
 
-        Me.StartPosition = FormStartPosition.Manual
-        Me.Bounds = unionBounds
-        Me.WindowState = FormWindowState.Normal
-
-        Dim f0 As Form = Frm_arr_extend(0)
-        Dim f1 As Form = Frm_arr_extend(1)
-        If f0 Is Nothing OrElse f0.IsDisposed Then Return
-        If f1 Is Nothing OrElse f1.IsDisposed Then Return
-
-        f0.MdiParent = Me
-        f1.MdiParent = Me
-
-        Dim offsetX As Integer = primaryScreen.Bounds.X - unionBounds.X
-        Dim offsetY As Integer = primaryScreen.Bounds.Y - unionBounds.Y
-
-        Dim form0Size As Size = primaryScreen.Bounds.Size
-        Dim form1Size As Size = extendScreen.Bounds.Size
-
-        Dim form0Location As Point = New Point(offsetX, offsetY)
-        Dim form1Location As Point = New Point(extendScreen.Bounds.X - unionBounds.X, extendScreen.Bounds.Y - unionBounds.Y)
-
-        With f0
-            .StartPosition = FormStartPosition.Manual
-            .Size = form0Size
-            .Location = form0Location
-            .WindowState = FormWindowState.Normal
-            .Show()
-        End With
-
-        With f1
-            .StartPosition = FormStartPosition.Manual
-            .Size = form1Size
-            .Location = form1Location
-            .WindowState = FormWindowState.Normal
-            .Show()
-        End With
-
-        isExtendMode = True
+        ' จัดวาง: หน้า 1 ที่จอ primary, หน้า 2 ที่จอ extend
+        LayoutForExtend(frm_Page_1, frm_Page_2)
     End Sub
 
     Private Sub MoveMainToScreen(selectedIndex As Integer)
@@ -857,9 +957,11 @@ Public Class MDI_FRM
             f0.Size = New Size(Me.ClientSize.Width, Me.ClientSize.Height)
             f0.Show()
             f0.BringToFront()
+            Me.WindowState = FormWindowState.Maximized
         End If
 
         isExtendMode = True
+        extendScreenIndex = -1 ' โหมด single page บนจออื่น ไม่ได้ใช้ extend 2 จอ
     End Sub
 
     Private Sub ShowMonitorGridMenu()
@@ -1027,18 +1129,6 @@ Public Class MDI_FRM
                 "Error at : " & ex.StackTrace
             Try : LogError.writeErr(strMessage) : Catch : End Try
         End Try
-
-        'Try
-        '    io.CloseEXE("Job_Assignment")
-        '    io.Open_Application("Job_Assignment", "ROUTE |BATCHING_1|")
-        'Catch ex As Exception
-        '    '==== Msg Error
-        '    If Error_Check = True Then Exit Sub
-        '    Error_Check = True
-        '    'Dim strMessage = "Error Number :  " & Err.Number & " [" + Me.Name + "]" & vbNewLine & "Error Description :  " & ex.Message & vbCrLf & "Error at : " & ex.StackTrace
-
-        '    'LogError.writeErr(strMessage)
-        'End Try
     End Sub
 
     Private Sub btn_PRODUCTION_TIME_Click(sender As Object, e As EventArgs) Handles btn_PRODUCTION_TIME.Click
@@ -1202,46 +1292,11 @@ Public Class MDI_FRM
     End Function
 
     Private Sub tsIntakeP1_Click(sender As Object, e As EventArgs) Handles tsIntakeP1.Click
-        frm_Page_1.MdiParent = Me
-        frm_Page_1.Location = New Point(0, 0)
-        frm_Page_1.BringToFront()
-
-        If numberofmonitors > 1 Then
-            If Me.WindowState = FormWindowState.Maximized Then
-                Me.WindowState = FormWindowState.Normal
-                Me.Width = frm_Page_1.Width + frm_Page_2.Width
-            End If
-            frm_Page_2.Location = New Point(frm_Page_1.Width, 0)
-            frm_Page_2.BringToFront()
-        Else
-            frm_Page_2.Hide()
-        End If
-
-        frm_Page_1.Show()
-        frm_Page_1.Location = New Point(0, 0)
-        frm_Page_1.BringToFront()
-
+        SelectP1()
     End Sub
 
     Private Sub tsIntakeP2_Click(sender As Object, e As EventArgs) Handles tsIntakeP2.Click
-        frm_Page_2.MdiParent = Me
-        frm_Page_2.Location = New Point(0, 0)
-        frm_Page_2.BringToFront()
-
-        If numberofmonitors > 1 Then
-            If Me.WindowState = FormWindowState.Maximized Then
-                Me.WindowState = FormWindowState.Normal
-                Me.Width = frm_Page_1.Width + frm_Page_2.Width
-            End If
-            frm_Page_1.Location = New Point(frm_Page_1.Width, 0)
-            frm_Page_1.BringToFront()
-        Else
-            frm_Page_1.Hide()
-        End If
-
-        frm_Page_2.Show()
-        frm_Page_2.Location = New Point(0, 0)
-        frm_Page_2.BringToFront()
+        SelectP2()
     End Sub
 
     Private Sub tsCboLanguage_TextChanged(sender As Object, e As EventArgs) Handles tsCboLanguage.TextChanged
@@ -1399,6 +1454,8 @@ Public Class MDI_FRM
                     frmAlarm_Des_New = Nothing
                 End Try
             End If
+
+            Custom_CloseApp()
 
         Catch ex As Exception
             Try : LogError.writeErr("Close_EXE outer error: " & ex.Message) : Catch : End Try

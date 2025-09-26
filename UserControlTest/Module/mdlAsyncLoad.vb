@@ -130,6 +130,7 @@ Public Class AppBootstrapContext
             Await Task.Delay(1000)
 
             splash.Close()
+            main.Enabled = True
             main.Activate()
             main.BringToFront()
             main.Focus()
