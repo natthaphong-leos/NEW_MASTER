@@ -87,7 +87,11 @@ Public Class AppBootstrapContext
         splash.Show()
     End Sub
 
+    Private booting As Boolean = False
+
     Private Async Sub OnSplashShown(sender As Object, e As EventArgs)
+        If booting Then Return
+        booting = True
         Try
             SetSplash("Preparing the system...")
             splash.SetProgress(5)
@@ -95,12 +99,12 @@ Public Class AppBootstrapContext
             main = New MDI_FRM()
 
             Dim init = main.GetType().GetMethod(
-                "InitializeAsync",
-                BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.NonPublic,
-                Nothing,
-                New Type() {GetType(LOAD)},
-                Nothing
-            )
+            "InitializeAsync",
+            BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.NonPublic,
+            Nothing,
+            New Type() {GetType(LOAD)},
+            Nothing
+        )
             If init IsNot Nothing Then
                 Dim task = TryCast(init.Invoke(main, New Object() {splash}), Task)
                 If task IsNot Nothing Then Await task
@@ -116,24 +120,32 @@ Public Class AppBootstrapContext
             main.Show()
 
             Dim showPages = main.GetType().GetMethod(
-                "ShowPagesAfterShown",
-                BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.NonPublic)
-            If showPages IsNot Nothing Then
-                showPages.Invoke(main, Nothing)
-            End If
+            "ShowPagesAfterShown",
+            BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.NonPublic)
+            If showPages IsNot Nothing Then showPages.Invoke(main, Nothing)
 
             Await WaitFormsReadyAsync(main, TimeSpan.FromSeconds(5))
 
             splash.SetStatus("Scada System Ready...")
             splash.SetProgress(100)
-            Application.DoEvents()
-            Await Task.Delay(1000)
+
+            Await Task.Yield()
+            splash.Refresh()
+            Await Task.Delay(200)
 
             splash.Close()
-            main.Enabled = True
-            main.Activate()
-            main.BringToFront()
-            main.Focus()
+
+            main.BeginInvoke(Sub()
+                                 For Each f As Form In Application.OpenForms
+                                     If f IsNot main AndAlso f.Modal Then f.Close()
+                                 Next
+
+                                 main.Enabled = True
+                                 main.Activate()
+                                 main.BringToFront()
+                                 main.Focus()
+                                 main.Select()
+                             End Sub)
 
         Catch ex As RestartRequestedException
             Try : splash.Close() : Catch : End Try
@@ -146,9 +158,11 @@ Public Class AppBootstrapContext
 
         Catch ex As Exception
             MessageBox.Show("System startup failed:" & vbCrLf & ex.Message,
-                            "Fatal", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        "Fatal", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Try : splash.Close() : Catch : End Try
             Application.Exit()
+        Finally
+            booting = False
         End Try
     End Sub
 

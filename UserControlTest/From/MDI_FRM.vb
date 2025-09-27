@@ -185,6 +185,17 @@ Public Class MDI_FRM
                                Frm_arr.Add(frm_Page_1)
                            End If
 
+                           Dim Show_EditLine As Boolean
+                           Boolean.TryParse(ConfigurationManager.AppSettings("Mode_EditLine"), Show_EditLine)
+
+                           If frm_Page_1 IsNot Nothing AndAlso Not frm_Page_1.IsDisposed Then
+                               frm_Page_1.btnLineManage.Visible = Show_EditLine
+                           End If
+
+                           If frm_Page_2 IsNot Nothing AndAlso Not frm_Page_2.IsDisposed Then
+                               frm_Page_2.btnLineManage.Visible = Show_EditLine
+                           End If
+
                            Close_EXE()
                        End Sub)
 
@@ -366,8 +377,8 @@ Public Class MDI_FRM
         Return String.Empty
     End Function
 #End Region
-#Region "# START APPLICATION"
-    Public Sub Start_Application()
+#Region "# LOG ON EVENT"
+    Public Sub Is_Logon()
         EnsureCnBatching()
         If Not CnBatching.TestConnection() Then
             MessageBox.Show("Database Not Connected. Please check network or configuration file.", "DB Error", MessageBoxButtons.OK, MessageBoxIcon.[Error])
@@ -401,7 +412,7 @@ Public Class MDI_FRM
                         lastOpenedExeNames_Batching.Add(exeName)
                     Next
 
-                ElseIf Route_Conveyer_Status Then
+                Else
                     ' เปิดโปรเซสฝั่ง Conveyer
                     For Each rn As String In routeNos
                         Dim exeName As String = BuildExeNameFromRoute_Conveyer(rn)

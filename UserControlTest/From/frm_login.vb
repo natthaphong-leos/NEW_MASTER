@@ -242,7 +242,7 @@ Public Class frm_login
                     ToBool(r("can_start_batch"))
                 )
                     mdi.IsAuthenticated = True
-                    mdi.Start_Application()
+                    mdi.Is_Logon()
                 End If
 
                 CompleteLogin()
