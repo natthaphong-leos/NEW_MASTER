@@ -108,9 +108,9 @@ Public Class frm_Page_2
         Try
             If BW_ReadPLC.IsBusy = False Then
                 BW_ReadPLC.RunWorkerAsync()
+
                 Call CheckStatusForScada()
-                ' Call ReadWeightSC()
-                ' Call ShowData_OPtimoist()
+
             End If
             btn_remote.Text = RemoteControl
             If UCase(RemoteControl) = "REMOTE CONTROL" Then
@@ -120,13 +120,11 @@ Public Class frm_Page_2
             Else
                 btn_remote.BackColor = Color.DimGray
             End If
+
             Call Show_AnalogInForm(Me, Scada.MqttAnalogData)
             Call Show_PidInForm(Me, Scada.MqttAnalogData, Scada.Mqtt_M_Data, Scada.ctrlPID_Changing, Scada.ctrlPID_Delay)
-            '=========================================================================
-            'txt_target_SC16.Text = Format((CtrlScale_16.mqtt_AlarmScale_.TARGET_WEIGHT) / 1000, "0.00")
-            'txt_actual_SC16.Text = Format((CtrlScale_16.mqtt_AlarmScale_.ACTUAL_WEIGHT) / 1000, "0.00")
-            'txt_ingred_sc16.Text = CtrlScale_16.mqtt_AlarmScale_.INGRED_CODE
-            '=========================================================================
+            Call FunctionWithTimer()
+
         Catch ex As Exception
             '==== Msg Error
             If Error_Check = True Then Exit Sub
@@ -146,7 +144,23 @@ Public Class frm_Page_2
         End If
     End Sub
 #End Region
-#Region " ### MANUAL HARDCODE ### "
+
+#Region " >>> MANUAL EDITCODE <<< "
+
+    ' ===================================== NOTE =====================================
+    ' FunctionWithTimer() สำหรับเรียกฟังก์ชันที่ต้องการให้ทำงานทุก ๆ ครั้งที่ Timer_Run tick
+    ' ถ้าเป็นไปได้ พยายามเขียนโค้ดให้อยู่ใน Region " >>> MANUAL EDITCODE <<< " 
+    ' ================================================================================
+
+    Public Sub FunctionWithTimer()
+        ' Call ReadWeightSC()
+        ' Call ShowData_OPtimoist()
+
+        'txt_target_SC16.Text = Format((CtrlScale_16.mqtt_AlarmScale_.TARGET_WEIGHT) / 1000, "0.00")
+        'txt_actual_SC16.Text = Format((CtrlScale_16.mqtt_AlarmScale_.ACTUAL_WEIGHT) / 1000, "0.00")
+        'txt_ingred_sc16.Text = CtrlScale_16.mqtt_AlarmScale_.INGRED_CODE
+    End Sub
+
     Private Sub Show_Line()
         '   === SCALE 1 ถัง
         'Scada.ShowGraphic(CtrlTAT_185.status_run And CtrlTAT_190.status_run, "81,82,83")
@@ -187,6 +201,7 @@ Public Class frm_Page_2
         'End If
     End Sub
 #End Region
+
 #Region "READ PLC"
     Private Sub BW_ReadPLC_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles BW_ReadPLC.DoWork
         Try

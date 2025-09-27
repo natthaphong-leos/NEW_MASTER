@@ -208,7 +208,10 @@ Public Class MDI_FRM
 
                                        btn_PRODUCTION_TIME.Enabled = False
                                        btn_JOB_ASSIGNMENT.Enabled = False
-                                       Me.Text = $"{Application.ProductName} [{Application.ProductVersion}] [{Application.CompanyName}] [{FileDateTime(Application.ExecutablePath)}]"
+
+                                       Dim exeDate As String = FileDateTime(Application.ExecutablePath).ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.GetCultureInfo("en-GB"))
+
+                                       Me.Text = $"{Application.ProductName} [{Application.ProductVersion}] [{Application.CompanyName}] [{exeDate}]"
                                        Me.lblIPComputer.Text = "IP : " & GetIPAddress()
                                    End Sub)
 
@@ -381,7 +384,7 @@ Public Class MDI_FRM
             lastOpenedExeNames_Conveyer.Clear()
             lastOpenedExeNames_Batching.Clear()
 
-            ' อ่านคอนฟิกเดิมสำหรับ Conveyer
+            ' อ่าน App.config สำหรับเรียก Route
             Boolean.TryParse(ConfigurationManager.AppSettings("Call_Route"), Call_Route_EXE)
 
             ' ตรวจว่ามี ctrlMixer_ / CtrlMixer_ บนฟอร์มหรือไม่ -> ถ้ามีให้เปิดโหมด Batching
@@ -425,14 +428,26 @@ Public Class MDI_FRM
     End Sub
 #End Region
 
-#Region " >>> CUSTOM CALL/CLOSE EXE"
+#Region " >>> CUSTOM CALL/CLOSE EXE <<<"
 
     Private ReadOnly lastOpenedExeNames_Other As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
 
+    ' ===================================== NOTE =====================================
     ' ROUTE ไม่ต้องเรียกผ่าน Custom_OpenApp Scada จะเรียกจาก Properties ของ control ใน frm
+    ' แต่ถ้าเป็นพวก Start Batch / Get Report / Alarm ต้องเรียกผ่าน Custom_OpenApp
+    ' Job Assignment สำหรับหน้า Start Batch ยังต้องเรียกผ่าน Job_Assignment_StartBatch 
+    ' ================================================================================
+
+    Public Sub Job_Assignment_StartBatch()
+        'io.Open_Application("Job_Assignment", "ROUTE |BATCHING_1|BATCHING_2|")
+    End Sub
+
     Public Sub Custom_OpenApp()
         Try
-            If Start_Batch_Status = True Then
+            ' อ่าน App.config สำหรับเรียกกรณี Start Batch
+            Boolean.TryParse(ConfigurationManager.AppSettings("Start_Batch"), Call_StartBatch_EXE)
+
+            If Start_Batch_Status And Call_StartBatch_EXE Then
                 'io.Open_Application_For_START_BATCH("TAT01_START_BATCHING_1_MIXER_1", " 1 ZR89900 localhost ASA BATCHING_1 MIXER_1 AUTO")
                 'io.Open_Application_For_START_BATCH("TAT01_START_BATCHING_2_MIXER_2", " 1 ZR90500 localhost ASA BATCHING_2 MIXER_2 AUTO")
             End If
@@ -467,6 +482,7 @@ Public Class MDI_FRM
     Public Sub Custom_CloseApp()
         Try
             'io.CloseEXE("TAT01_START_BATCHING_1_MIXER_1")
+            'io.CloseEXE("Job_Assignment")
             'io.CloseEXE("GET_REPORT_BATCHING_MIX1")
             'io.CloseEXE("TAT01_SCALE_1_PARAMETER_ALARM_SCALE")
             'io.CloseEXE("TAT01_SCALE_2_PARAMETER_ALARM_SCALE")
@@ -1112,23 +1128,27 @@ Public Class MDI_FRM
     End Sub
 
     Private Sub btn_JOB_ASSIGNMENT_Click(sender As Object, e As EventArgs) Handles btn_JOB_ASSIGNMENT.Click
-        Try
-            Dim pipeList As String = BuildLocationPipeListFromForm(Me)
+        If Call_StartBatch_EXE Then
+            Job_Assignment_StartBatch()
+        Else
+            Try
+                Dim pipeList As String = BuildLocationPipeListFromForm(Me)
 
-            io.CloseEXE("Job_Assignment")
+                io.CloseEXE("Job_Assignment")
 
-            If String.IsNullOrEmpty(pipeList) Then Exit Sub
-            io.Open_Application("Job_Assignment", "ROUTE " & pipeList)
+                If String.IsNullOrEmpty(pipeList) Then Exit Sub
+                io.Open_Application("Job_Assignment", "ROUTE " & pipeList)
 
-        Catch ex As Exception
-            If Error_Check Then Exit Sub
-            Error_Check = True
-            Dim strMessage As String =
-                "Error Number :  " & Err.Number & " [" & Me.Name & "]" & vbNewLine &
-                "Error Description :  " & ex.Message & vbCrLf &
-                "Error at : " & ex.StackTrace
-            Try : LogError.writeErr(strMessage) : Catch : End Try
-        End Try
+            Catch ex As Exception
+                If Error_Check Then Exit Sub
+                Error_Check = True
+                Dim strMessage As String =
+                    "Error Number :  " & Err.Number & " [" & Me.Name & "]" & vbNewLine &
+                    "Error Description :  " & ex.Message & vbCrLf &
+                    "Error at : " & ex.StackTrace
+                Try : LogError.writeErr(strMessage) : Catch : End Try
+            End Try
+        End If
     End Sub
 
     Private Sub btn_PRODUCTION_TIME_Click(sender As Object, e As EventArgs) Handles btn_PRODUCTION_TIME.Click
