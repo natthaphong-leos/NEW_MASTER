@@ -3,10 +3,10 @@ Imports System.Reflection
 Imports System.Runtime.InteropServices
 
 ' General information about the Assembly
-<Assembly: AssemblyTitle("SCADA MASTER")>
-<Assembly: AssemblyDescription("SCADA Master Control System")>
+<Assembly: AssemblyTitle("SCADA SYSTEM")>
+<Assembly: AssemblyDescription("Supervisory Control and Data Acquisition System for Feed Mill Automation")>
 <Assembly: AssemblyCompany("TAT ENERGY AND ENGINEERING CO., LTD.")>
-<Assembly: AssemblyProduct("Smart Batching")>
+<Assembly: AssemblyProduct("SCADA MASTER SYSTEM")> ' <<< PRODUCTION NAME
 <Assembly: AssemblyTrademark("SMART BATCHING")>
 <Assembly: AssemblyCulture("")>
 
