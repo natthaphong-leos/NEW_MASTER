@@ -68,7 +68,7 @@ Partial Class MDI_FRM
         Me.ToolTip = New System.Windows.Forms.ToolTip(Me.components)
         Me.PerformanceCounter1 = New System.Diagnostics.PerformanceCounter()
         Me.BackgroundWorker1 = New System.ComponentModel.BackgroundWorker()
-        Me.tsIntakeP1 = New System.Windows.Forms.ToolStripButton()
+        Me.btnPage_1 = New System.Windows.Forms.ToolStripButton()
         Me.ToolStripSeparator9 = New System.Windows.Forms.ToolStripSeparator()
         Me.btn_JOB_ASSIGNMENT = New System.Windows.Forms.ToolStripButton()
         Me.ToolStripSeparator10 = New System.Windows.Forms.ToolStripSeparator()
@@ -91,7 +91,7 @@ Partial Class MDI_FRM
         Me.btn_Refresh = New System.Windows.Forms.ToolStripButton()
         Me.ToolStripSeparator13 = New System.Windows.Forms.ToolStripSeparator()
         Me.ToolStrip_Top = New System.Windows.Forms.ToolStrip()
-        Me.tsIntakeP2 = New System.Windows.Forms.ToolStripButton()
+        Me.btnPage_2 = New System.Windows.Forms.ToolStripButton()
         Me.ToolStripLabel1 = New System.Windows.Forms.ToolStripLabel()
         Me.tsCboLanguage = New System.Windows.Forms.ToolStripComboBox()
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
@@ -406,20 +406,20 @@ Partial Class MDI_FRM
         Me.PerformanceCounter1.CounterName = "% Processor Time"
         Me.PerformanceCounter1.InstanceName = "_Total"
         '
-        'tsIntakeP1
+        'btnPage_1
         '
-        Me.tsIntakeP1.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.tsIntakeP1.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.tsIntakeP1.ForeColor = System.Drawing.Color.Black
-        Me.tsIntakeP1.Image = Global.Project.My.Resources.Resources.SYS_MDI_Page
-        Me.tsIntakeP1.ImageAlign = System.Drawing.ContentAlignment.TopCenter
-        Me.tsIntakeP1.ImageTransparentColor = System.Drawing.Color.Black
-        Me.tsIntakeP1.Name = "tsIntakeP1"
-        Me.tsIntakeP1.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
-        Me.tsIntakeP1.Size = New System.Drawing.Size(96, 47)
-        Me.tsIntakeP1.Text = "FROM PAGE 1"
-        Me.tsIntakeP1.TextAlign = System.Drawing.ContentAlignment.BottomCenter
-        Me.tsIntakeP1.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay
+        Me.btnPage_1.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Me.btnPage_1.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnPage_1.ForeColor = System.Drawing.Color.Black
+        Me.btnPage_1.Image = Global.Project.My.Resources.Resources.SYS_MDI_Page
+        Me.btnPage_1.ImageAlign = System.Drawing.ContentAlignment.TopCenter
+        Me.btnPage_1.ImageTransparentColor = System.Drawing.Color.Black
+        Me.btnPage_1.Name = "btnPage_1"
+        Me.btnPage_1.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
+        Me.btnPage_1.Size = New System.Drawing.Size(96, 47)
+        Me.btnPage_1.Text = "FROM PAGE 1"
+        Me.btnPage_1.TextAlign = System.Drawing.ContentAlignment.BottomCenter
+        Me.btnPage_1.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay
         '
         'ToolStripSeparator9
         '
@@ -646,7 +646,7 @@ Partial Class MDI_FRM
         Me.ToolStrip_Top.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden
         Me.ToolStrip_Top.ImageScalingSize = New System.Drawing.Size(20, 20)
         Me.ToolStrip_Top.ImeMode = System.Windows.Forms.ImeMode.NoControl
-        Me.ToolStrip_Top.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.tsIntakeP1, Me.tsIntakeP2, Me.ToolStripSeparator9, Me.btn_JOB_ASSIGNMENT, Me.ToolStripSeparator11, Me.ToolStripDropDownButton1, Me.btn_Show_bin_code, Me.btn_Show_Code, Me.btn_PRODUCTION_TIME, Me.btnExtend, Me.btn_Refresh, Me.ToolStripSeparator12, Me.btn_LOG_ON, Me.btn_LOG_OFF, Me.btn_exit, Me.ToolStripSeparator10, Me.ToolStripLabel1, Me.tsCboLanguage, Me.ToolStripSeparator13})
+        Me.ToolStrip_Top.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btnPage_1, Me.btnPage_2, Me.ToolStripSeparator9, Me.btn_JOB_ASSIGNMENT, Me.ToolStripSeparator11, Me.ToolStripDropDownButton1, Me.btn_Show_bin_code, Me.btn_Show_Code, Me.btn_PRODUCTION_TIME, Me.btnExtend, Me.btn_Refresh, Me.ToolStripSeparator12, Me.btn_LOG_ON, Me.btn_LOG_OFF, Me.btn_exit, Me.ToolStripSeparator10, Me.ToolStripLabel1, Me.tsCboLanguage, Me.ToolStripSeparator13})
         Me.ToolStrip_Top.Location = New System.Drawing.Point(0, 0)
         Me.ToolStrip_Top.Margin = New System.Windows.Forms.Padding(10)
         Me.ToolStrip_Top.Name = "ToolStrip_Top"
@@ -657,20 +657,20 @@ Partial Class MDI_FRM
         Me.ToolStrip_Top.TabIndex = 6
         Me.ToolStrip_Top.Text = "ToolStrip"
         '
-        'tsIntakeP2
+        'btnPage_2
         '
-        Me.tsIntakeP2.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.tsIntakeP2.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.tsIntakeP2.ForeColor = System.Drawing.Color.Black
-        Me.tsIntakeP2.Image = Global.Project.My.Resources.Resources.SYS_MDI_Page
-        Me.tsIntakeP2.ImageAlign = System.Drawing.ContentAlignment.TopCenter
-        Me.tsIntakeP2.ImageTransparentColor = System.Drawing.Color.Black
-        Me.tsIntakeP2.Name = "tsIntakeP2"
-        Me.tsIntakeP2.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
-        Me.tsIntakeP2.Size = New System.Drawing.Size(96, 47)
-        Me.tsIntakeP2.Text = "FROM PAGE 2"
-        Me.tsIntakeP2.TextAlign = System.Drawing.ContentAlignment.BottomCenter
-        Me.tsIntakeP2.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay
+        Me.btnPage_2.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Me.btnPage_2.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnPage_2.ForeColor = System.Drawing.Color.Black
+        Me.btnPage_2.Image = Global.Project.My.Resources.Resources.SYS_MDI_Page
+        Me.btnPage_2.ImageAlign = System.Drawing.ContentAlignment.TopCenter
+        Me.btnPage_2.ImageTransparentColor = System.Drawing.Color.Black
+        Me.btnPage_2.Name = "btnPage_2"
+        Me.btnPage_2.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
+        Me.btnPage_2.Size = New System.Drawing.Size(96, 47)
+        Me.btnPage_2.Text = "FROM PAGE 2"
+        Me.btnPage_2.TextAlign = System.Drawing.ContentAlignment.BottomCenter
+        Me.btnPage_2.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay
         '
         'ToolStripLabel1
         '
@@ -853,7 +853,7 @@ Partial Class MDI_FRM
     Friend WithEvents ToolsMenu As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents PerformanceCounter1 As System.Diagnostics.PerformanceCounter
     Friend WithEvents BackgroundWorker1 As System.ComponentModel.BackgroundWorker
-    Friend WithEvents tsIntakeP1 As ToolStripButton
+    Friend WithEvents btnPage_1 As ToolStripButton
     Friend WithEvents ToolStripSeparator9 As ToolStripSeparator
     Friend WithEvents btn_JOB_ASSIGNMENT As ToolStripButton
     Friend WithEvents ToolStripSeparator10 As ToolStripSeparator
@@ -890,5 +890,5 @@ Partial Class MDI_FRM
     Friend WithEvents ToolStripMenuItem1 As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem2 As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem3 As ToolStripMenuItem
-    Friend WithEvents tsIntakeP2 As ToolStripButton
+    Friend WithEvents btnPage_2 As ToolStripButton
 End Class

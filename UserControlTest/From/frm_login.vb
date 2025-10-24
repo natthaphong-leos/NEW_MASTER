@@ -1,6 +1,9 @@
-﻿Imports System.Drawing
+﻿Option Strict On
+Option Explicit On
+Imports System.Drawing
 Imports System.Globalization
-Imports System.Runtime.Remoting.Lifetime
+Imports System.Configuration
+
 Public Class frm_login
     Public Declare Function GetSystemDefaultLCID Lib "kernel32" () As Int32
     Public Const LOCALE_SLANGUAGE As Long = &H2
@@ -8,177 +11,261 @@ Public Class frm_login
     Public Const LOCALE_SLONGDATE As Long = &H20
     Public Const LOCALE_STIMEFORMAT = &H1003
     Public Const LOCALE_ICALENDARTYPE = &H1009
-
     Public Const DATE_LONGDATE As Long = &H2
     Public Const DATE_SHORTDATE As Long = &H1
     Public Const LOCALE_USE_CP_ACP = &H40000000
-    Dim blAuto_Production As String
     Public Const HWND_BROADCAST As Long = &HFFFF&
     Public Const WM_SETTINGCHANGE As Long = &H1A
-    Dim dtProductionDate_Act As String
 
-    Dim Cn As New clsDB(Batching_Conf.Name, Batching_Conf.User, Batching_Conf.Password, Batching_Conf.IPAddress, Batching_Conf.Connection_Type)
-    Dim dt As DataTable
-    Dim dev_operator_code As String
-    Dim dev_operator_name As String
-    Dim dev_employee As String
+    Private blAuto_Production As String
+    Private dtProductionDate_Act As String
 
-    '========================= LOGIN PERMISSION ========================
-    'UPDATED BY: NATTHAPHONG 23/09/2025
+    Private ReadOnly CnBatching As New clsDB(
+        Batching_Conf.Name,
+        Batching_Conf.User,
+        Batching_Conf.Password,
+        Batching_Conf.IPAddress,
+        Batching_Conf.Connection_Type
+    )
+
+    Private ReadOnly CnDevCenter As New clsDB(
+        Dev_Center_Conf.Name,
+        Dev_Center_Conf.User,
+        Dev_Center_Conf.Password,
+        Dev_Center_Conf.IPAddress,
+        Dev_Center_Conf.Connection_Type
+    )
+
+    Private dev_operator_code As String
+    Private dev_operator_name As String
+    Private dev_employee As String
+    Private _showingPassword As Boolean = False
+
+    '========================= LOGIN PERMISSION =========================
+    'UPDATED BY: NATTHAPHONG (refactor to FD_Login_Permission) 22/10/2025
 
     Private Sub frm_login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Try
-            Me.Icon = My.Resources.SmartFeedmill
+            ' ===== Show/Hide password: PictureBox instead of Button =====
+            ' ใส่ picShowHide ลงในฟอร์มผ่าน Designer แล้วตั้ง Cursor=Hand, BorderStyle=None
+            picShowHide.Image = Project.My.Resources.Resources.UI_EyeClose_32x32
+            picShowHide.SizeMode = PictureBoxSizeMode.Zoom
+            picShowHide.Visible = (txtPassword.TextLength > 0)
+            picShowHide.BringToFront()
+
+            ' ให้พื้นหลังของไอคอนกลืนไปกับ Parent (กันแถบสีเพี้ยนเวลา Hover)
+            Dim parentColor As Color = If(picShowHide.Parent IsNot Nothing, picShowHide.Parent.BackColor, SystemColors.Control)
+            picShowHide.BackColor = parentColor
+            If picShowHide.Parent IsNot Nothing Then
+                AddHandler picShowHide.Parent.BackColorChanged, AddressOf SyncShowHideBackColor
+            Else
+                AddHandler picShowHide.HandleCreated,
+                    Sub()
+                        If picShowHide.Parent IsNot Nothing Then
+                            SyncShowHideBackColor(picShowHide.Parent, EventArgs.Empty)
+                            AddHandler picShowHide.Parent.BackColorChanged, AddressOf SyncShowHideBackColor
+                        End If
+                    End Sub
+            End If
+
+            ' ===== Password box defaults =====
+            txtPassword.UseSystemPasswordChar = True
+            _showingPassword = False
+
+            Try
+                Me.Icon = My.Resources.SmartFeedmill
+            Catch
+            End Try
+
             dtp_date.Enabled = False
 
             Dim sqlStrs As String =
-            "SELECT thaisia.current_status.c_autoupdate, thaisia.current_status.c_production_date " &
-            "FROM thaisia.current_status WHERE thaisia.current_status.c_location LIKE 'BATCHING%'"
+                "SELECT c_autoupdate, c_production_date " &
+                "FROM thaisia.current_status WHERE c_location LIKE 'BATCHING%'"
 
             Dim rss As DataTable = Nothing
             Try
-                rss = Cn.ExecuteDataTable(sqlStrs)
-            Catch ex As Exception
-                LabelMessage.Visible = True
-                LabelMessage.ForeColor = Color.Red
-                LabelMessage.Text = "Cannot load current status from database."
+                rss = CnBatching.ExecuteDataTable(sqlStrs)
+            Catch
+                ShowMessage("Cannot load current status from database.", Color.Red)
             End Try
 
             If rss IsNot Nothing AndAlso rss.Rows.Count > 0 Then
-                Dim autoUpdate As String = (rss.Rows(0)("c_autoupdate") & "").ToString()
-                Dim productionDate As String = (rss.Rows(0)("c_production_date") & "").ToString()
+                Dim autoUpdate As String = If(IsDBNull(rss.Rows(0)("c_autoupdate")), "", rss.Rows(0)("c_autoupdate").ToString())
+                Dim productionDate As String = If(IsDBNull(rss.Rows(0)("c_production_date")), "", rss.Rows(0)("c_production_date").ToString())
 
                 cmdChange.Enabled = (autoUpdate = "M")
 
                 Dim d As DateTime
                 If DateTime.TryParse(productionDate, d) Then
-                    dtp_date.Text = d
+                    dtp_date.Text = d.ToString("dd/MM/yyyy", Globalization.CultureInfo.InvariantCulture)
                 Else
-                    dtp_date.Text = Date.Today
+                    dtp_date.Text = Date.Today.ToString("dd/MM/yyyy", Globalization.CultureInfo.InvariantCulture)
                 End If
             Else
                 cmdChange.Enabled = False
-                dtp_date.Text = Date.Today
+                dtp_date.Text = Date.Today.ToString("dd/MM/yyyy", Globalization.CultureInfo.InvariantCulture)
             End If
 
             txtUserName.Select()
 
         Catch ex As Exception
-            LabelMessage.Visible = True
-            LabelMessage.ForeColor = Color.Red
-            LabelMessage.Text = "Unexpected error while initializing."
+            ShowMessage("Unexpected error while initializing: " & ex.Message, Color.Red)
         End Try
     End Sub
 
-    Private Sub cmdOK_Click()
+    ' READ FLAG LoginFailed_Count FROM App.config
+    Private Function ReadLoginFailedLimit() As Integer?
+        Dim raw As String = ConfigurationManager.AppSettings("LoginFailed_Count")
+        If String.IsNullOrWhiteSpace(raw) Then Return Nothing
+        raw = raw.Trim()
+        If String.Equals(raw, "N", StringComparison.OrdinalIgnoreCase) Then Return Nothing
+        Dim n As Integer
+        If Integer.TryParse(raw, n) AndAlso n > 0 Then Return n
+        Return Nothing
+    End Function
+
+    Private Sub cmdOK_Core()
+        ' connection Dev Center
+        If CnDevCenter Is Nothing AndAlso Not String.IsNullOrWhiteSpace(Dev_Center_Conf.Name) AndAlso Dev_Center_Conf.Name.ToLower() <> "error" Then
+        End If
+
         Try
-            Dim rs As DataTable = Nothing
-            Dim dev_expiredate As String = Nothing
             dtProductionDate_Act = Nothing
 
-            ' 1) Validate input
+            ' 1) VALIDATE INPUT
             If String.IsNullOrWhiteSpace(txtUserName.Text) OrElse String.IsNullOrWhiteSpace(txtPassword.Text) Then
                 ShowMessage("Please enter both username and password.", Color.Red)
                 txtUserName.Focus()
                 Exit Sub
             End If
 
-            ' 2) Find user in DB
-            Dim dtUser As DataTable = Nothing
+            ' 2) STORED PROCEDURE: thaisia.FD_Login_Permission
+            Dim rs As DataTable = Nothing
+            Dim limit As Integer? = ReadLoginFailedLimit()
+
             Try
-                Cn.ClearPara()
-                Cn.AddPara("@UserName", Trim(txtUserName.Text))
-                dtUser = Cn.ExecuteDataTable("
-                    SELECT c_user_code, c_login, c_password, c_active, ISNULL(n_login_pass_failed,0) AS n_login_pass_failed
-                    FROM thaisia.s_user
-                    WHERE c_login = @UserName")
-            Catch ex As Exception
-                ShowMessage("Cannot query user info: " & ex.Message, Color.Red)
-                Exit Sub
-            End Try
+                CnBatching.ClearPara()
+                CnBatching.AddPara("@UserName", txtUserName.Text.Trim())
+                CnBatching.AddPara("@Password", txtPassword.Text.Trim())
+                If limit.HasValue AndAlso limit.Value > 0 Then
+                    CnBatching.AddPara("@MaxFailedAttempts", limit.Value)
+                Else
+                    CnBatching.AddPara("@MaxFailedAttempts", DBNull.Value)
+                End If
 
-            If dtUser Is Nothing OrElse dtUser.Rows.Count = 0 Then
-                ShowMessage("User not found. Please try another account.", Color.Red)
-                txtUserName.Focus()
-                txtUserName.SelectAll()
-                Exit Sub
-            End If
+                ' DYNAMIC NAME dev_center.dbo.web_users
+                If Not String.IsNullOrWhiteSpace(Dev_Center_Conf.Name) AndAlso Dev_Center_Conf.Name.ToLower() <> "error" Then
+                    CnBatching.AddPara("@ExtDb", Dev_Center_Conf.Name)
+                Else
+                    CnBatching.AddPara("@ExtDb", DBNull.Value)
+                End If
 
-            Dim u = dtUser.Rows(0)
-            Dim dbActive As String = If(IsDBNull(u("c_active")), "", u("c_active").ToString().Trim())
-            Dim failCount As Integer = 0
-            Try : failCount = Convert.ToInt32(u("n_login_pass_failed")) : Catch : failCount = 0 : End Try
-
-            If String.Equals(dbActive, "N", StringComparison.OrdinalIgnoreCase) Then
-                ShowMessage("This account is locked. Please contact administrator.", Color.Red)
-                Exit Sub
-            End If
-
-            ' 3) Validate password via SP
-            Try
-                Cn.ClearPara()
-                Cn.AddPara("@UserName", Trim(txtUserName.Text))
-                Cn.AddPara("@Password", Trim(txtPassword.Text))
-                rs = Cn.SelectTableProcedure("thaisia.SCADA_Login_Permission")
+                rs = CnBatching.SelectTableProcedure("thaisia.FD_Login_Permission")
             Catch ex As Exception
                 ShowMessage("Cannot validate login (SP error): " & ex.Message, Color.Red)
                 Exit Sub
             End Try
 
-            Dim isSuccess As Boolean =
-            (rs IsNot Nothing AndAlso rs.Rows.Count > 0 AndAlso
-             Not IsDBNull(rs.Rows(0)("c_user_code")) AndAlso
-             Not String.IsNullOrWhiteSpace(rs.Rows(0)("c_user_code").ToString()))
-
-            If Not isSuccess Then
-                ' (FAIL PATH)
-                failCount += 1
-                Try
-                    Cn.ClearPara()
-                    Cn.AddPara("@UserName", Trim(txtUserName.Text))
-                    Cn.AddPara("@Fail", failCount)
-                    Cn.ExecuteDataTable("UPDATE thaisia.s_user SET n_login_pass_failed=@Fail WHERE c_login=@UserName")
-                Catch ex As Exception
-                    MsgBox("Cannot update fail count: " & ex.Message)
-                End Try
-
-                If failCount >= 3 Then
-                    Try
-                        Cn.ClearPara()
-                        Cn.AddPara("@UserName", Trim(txtUserName.Text))
-                        Cn.ExecuteDataTable("UPDATE thaisia.s_user SET c_active='N' WHERE c_login=@UserName")
-                    Catch ex As Exception
-                        MsgBox("Cannot lock account: " & ex.Message)
-                    End Try
-
-                    ShowMessage("Your account has been locked due to 3 failed login attempts." &
-                            Environment.NewLine & "Please contact administrator.", Color.Red)
-                Else
-                    ShowMessage("Invalid password. " & (3 - failCount).ToString() & " attempts remaining.", Color.Red)
-                End If
-
-                txtPassword.Focus()
-                txtPassword.SelectAll()
+            If rs Is Nothing OrElse rs.Rows.Count = 0 Then
+                ShowMessage("Unexpected login response.", Color.Red)
                 Exit Sub
             End If
 
-            ' 4) Success: reset fail count
-            Try
-                Cn.ClearPara()
-                Cn.AddPara("@UserName", Trim(txtUserName.Text))
-                Cn.ExecuteDataTable("UPDATE thaisia.s_user SET n_login_pass_failed=0 WHERE c_login=@UserName")
-            Catch ex As Exception
-                MsgBox("Cannot reset fail count: " & ex.Message)
-            End Try
+            ' 3) RESULT OF STORED PROCEDURE
+            Dim r As DataRow = rs.Rows(0)
+            Dim ok As Boolean = ToBool(r("success"))
+            Dim code As String = If(IsDBNull(r("code")), "", r("code").ToString())
+            Dim msg As String = If(IsDBNull(r("message")), "", r("message").ToString())
 
-            ' 5) Read fields from SP
-            Dim r = rs.Rows(0)
-            dev_operator_code = Trim(txtUserName.Text)
+            Select Case code
+                Case "USER_NOT_FOUND"
+                    ShowMessage(msg, Color.Red)
+                    txtUserName.Focus()
+                    txtUserName.SelectAll()
+                    Exit Sub
+
+                Case "LOCKED"
+                    ShowMessage(msg, Color.Red)
+                    Exit Sub
+
+                Case "TOO_MANY_FAILS"
+                    ShowMessage(msg, Color.Red)
+                    txtPassword.SelectAll() : txtPassword.Focus()
+                    Exit Sub
+
+                Case "WRONG_PASS"
+                    Dim leftTry As Integer
+                    If Not IsDBNull(r("attempts_left")) AndAlso Integer.TryParse(r("attempts_left").ToString(), leftTry) Then
+                        ShowMessage(msg & If(leftTry >= 0, " " & leftTry.ToString() & " attempts remaining.", ""), Color.Red)
+                        ClearTextInputs()
+                    Else
+                        ShowMessage(msg, Color.Red)
+                    End If
+                    txtPassword.SelectAll() : txtPassword.Focus()
+                    Exit Sub
+
+                Case "EXPIRED"
+                    Dim expStr As String = ""
+                    If Not IsDBNull(r("d_date_exp")) Then
+                        Dim dx As DateTime
+                        If DateTime.TryParse(r("d_date_exp").ToString(), dx) Then
+                            expStr = dx.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)
+                        End If
+                    End If
+                    ShowMessage("User account has expired on " & expStr & ". Please contact administrator.", Color.Red)
+                    Exit Sub
+
+                Case "OK", "OK_EXP_SOON"
+
+                Case Else
+                    If Not ok Then
+                        ShowMessage(If(String.IsNullOrEmpty(msg), "Login failed.", msg), Color.Red)
+                        Exit Sub
+                    End If
+            End Select
+
+            ' 4) SUCCESS AND WARNING EXPIRING SOON
+            dev_operator_code = txtUserName.Text.Trim()
             dev_operator_name = If(IsDBNull(r("c_name")), "", r("c_name").ToString())
-            dev_expiredate = If(IsDBNull(r("d_date_exp")), "", r("d_date_exp").ToString())
             dev_employee = If(IsDBNull(r("c_employee_id")), "", r("c_employee_id").ToString())
 
-            ' 6) Hardlock validation
+            If code = "OK_EXP_SOON" Then
+                Dim daysLeft As Integer
+                Dim expDateStr As String = ""
+
+                If Not IsDBNull(r("d_date_exp")) Then
+                    Dim expDate As DateTime
+                    If DateTime.TryParse(r("d_date_exp").ToString(), expDate) Then
+                        expDateStr = expDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)
+                    End If
+                End If
+
+                If Not IsDBNull(r("days_to_expiry")) AndAlso Integer.TryParse(r("days_to_expiry").ToString(), daysLeft) Then
+
+                    Dim warningMsg As String = "Warning: Your account will expire in " & daysLeft.ToString() & " day" & If(daysLeft > 1, "s", "")
+                    If Not String.IsNullOrEmpty(expDateStr) Then
+                        warningMsg &= " (Expiry Date: " & expDateStr & ")"
+                    End If
+                    warningMsg &= "."
+
+                    ShowMessage(warningMsg, Color.Orange)
+
+                    Dim ackMsg As String = "Your account will expire soon"
+                    If Not String.IsNullOrEmpty(expDateStr) Then
+                        ackMsg &= " on " & expDateStr
+                    End If
+                    ackMsg &= ". Please contact administrator to renew."
+
+                    If Not RequireAcknowledge(ackMsg, "Account Expiring Soon") Then
+                        Exit Sub
+                    End If
+                End If
+            Else
+                ShowMessage("Login successful. Welcome, " & dev_operator_name & ".", Color.Green)
+            End If
+
+            ' 5) HARDLOCK
             Try
                 If StrMqtt_Config_.HardLock Then
                     If MDI_FRM.CheckHasp.Hardlock() <> 0 Then
@@ -192,61 +279,23 @@ Public Class frm_login
                 Exit Sub
             End Try
 
-            ' 7) Check expiration date
-            Try
-                If Not String.IsNullOrWhiteSpace(dev_expiredate) Then
-                    Dim expireDate As DateTime
-                    If DateTime.TryParse(dev_expiredate, expireDate) Then
-                        If expireDate < DateTime.Now.Date Then
-                            ShowMessage("User account has expired on " & expireDate.ToString("dd/MM/yyyy") & "." &
-                                    Environment.NewLine & "Please contact administrator.", Color.Red)
-                            Exit Sub
-                        ElseIf expireDate <= DateTime.Now.Date.AddDays(14) Then
-                            ShowMessage("Warning: Your account will expire on " & expireDate.ToString("dd/MM/yyyy") &
-                                    " (" & (expireDate - DateTime.Now.Date).Days & " days remaining). Please contact administrator to renew your account.", Color.Orange)
-
-                            Dim msg As String =
-                            "WARNING !" & Environment.NewLine &
-                            "Your account will expire on " & expireDate.ToString("dd/MM/yyyy") &
-                            " (" & (expireDate - DateTime.Now.Date).Days & " days remaining)." & Environment.NewLine &
-                            "Please contact administrator to renew your account."
-
-                            If Not RequireAcknowledge(msg, "Account Expiring Soon") Then
-                                Exit Sub
-                            End If
-                        Else
-                            ShowMessage("Login successful. Welcome, " & dev_operator_name & ".", Color.Green)
-                        End If
-                    Else
-                        ShowMessage("Invalid expiration date format." & Environment.NewLine & "Please contact administrator.", Color.Red)
-                        Exit Sub
-                    End If
-                Else
-                    ShowMessage("Login successful. Welcome, " & dev_operator_name & ".", Color.Green)
-                End If
-            Catch ex As Exception
-                ShowMessage("Error while validating expiration date: " & ex.Message, Color.Red)
-                Exit Sub
-            End Try
-
-            ' 8) Send the permission to MDI.
+            ' 6) PERMISSION OF MDI_FRM
             Try
                 Dim mdi = MDI_FRM.Current()
                 If mdi IsNot Nothing Then
                     mdi.ApplyPermissions(
-                    ToBool(r("can_production_time")),
-                    ToBool(r("can_job_assignment")),
-                    ToBool(r("can_main_scada")),
-                    ToBool(r("can_alarm")),
-                    ToBool(r("can_route")),
-                    ToBool(r("can_start_batch"))
-                )
+                        ToBool(r("can_production_time")),
+                        ToBool(r("can_job_assignment")),
+                        ToBool(r("can_main_scada")),
+                        ToBool(r("can_alarm")),
+                        ToBool(r("can_route")),
+                        ToBool(r("can_start_batch"))
+                    )
                     mdi.IsAuthenticated = True
                     mdi.Is_Logon()
                 End If
 
                 CompleteLogin()
-
             Catch ex As Exception
                 ShowMessage("Error while applying permissions: " & ex.Message, Color.Red)
                 Exit Sub
@@ -254,14 +303,66 @@ Public Class frm_login
 
         Catch ex As Exception
             ShowMessage("Unexpected error while logging in: " & ex.Message, Color.Red)
-            Exit Sub
         End Try
     End Sub
 
+    ' ===== Button/Event Handlers =====
+    Private Sub cmdOK_Click()
+        cmdOK_Core()
+    End Sub
+
+    Private Sub cmdOK_Click(sender As Object, e As EventArgs) Handles cmdOK.Click
+        cmdOK_Core()
+    End Sub
+
+    Private Sub txt_KeyDown(sender As Object, e As KeyEventArgs) Handles txtUserName.KeyDown, txtPassword.KeyDown
+        If e.KeyCode = Keys.Enter Then
+            e.Handled = True
+            e.SuppressKeyPress = True
+            cmdOK_Core()
+        End If
+    End Sub
+
+    ' เปลี่ยนจาก Button → PictureBox: แก้ handler ตรงนี้
+    Private Sub picShowHide_Click(sender As Object, e As EventArgs) Handles picShowHide.Click
+        Dim selStart As Integer = txtPassword.SelectionStart
+
+        _showingPassword = Not _showingPassword
+        txtPassword.UseSystemPasswordChar = Not _showingPassword
+
+        If _showingPassword Then
+            picShowHide.Image = Project.My.Resources.Resources.UI_EyeOpen_32x32
+        Else
+            picShowHide.Image = Project.My.Resources.Resources.UI_EyeClose_32x32
+        End If
+        picShowHide.SizeMode = PictureBoxSizeMode.Zoom
+
+        txtPassword.SelectionStart = Math.Min(selStart, txtPassword.TextLength)
+        txtPassword.SelectionLength = 0
+    End Sub
+
+    Private Sub txtPassword_TextChanged(sender As Object, e As EventArgs) Handles txtPassword.TextChanged
+        picShowHide.Visible = (txtPassword.TextLength > 0)
+    End Sub
+
+    ' ===== Utils =====
+    Private Sub ClearTextInputs()
+        If txtUserName.InvokeRequired Then
+            txtUserName.Invoke(New Action(AddressOf ClearTextInputs))
+        Else
+            txtUserName.Text = ""
+            txtPassword.Text = ""
+        End If
+    End Sub
+
     Private Sub ShowMessage(message As String, color As Color)
-        LabelMessage.Visible = True
-        LabelMessage.ForeColor = color
-        LabelMessage.Text = message
+        If LabelMessage.InvokeRequired Then
+            LabelMessage.Invoke(New Action(Of String, Color)(AddressOf ShowMessage), message, color)
+        Else
+            LabelMessage.Visible = True
+            LabelMessage.ForeColor = color
+            LabelMessage.Text = message
+        End If
     End Sub
 
     Private Sub CompleteLogin()
@@ -281,7 +382,7 @@ Public Class frm_login
                 Me.Hide()
             End If
 
-            If Me.Visible Then
+            If Not Me.IsDisposed AndAlso Me.Visible Then
                 Me.Close()
             End If
 
@@ -294,29 +395,29 @@ Public Class frm_login
     Private Function RequireAcknowledge(message As String, Optional title As String = "Login") As Boolean
         Try
             Dim f As New Form With {
-            .Text = title,
-            .StartPosition = FormStartPosition.CenterParent,
-            .FormBorderStyle = FormBorderStyle.FixedDialog,
-            .MinimizeBox = False, .MaximizeBox = False,
-            .ShowInTaskbar = False, .ClientSize = New Size(420, 180)
-        }
+                .Text = title,
+                .StartPosition = FormStartPosition.CenterParent,
+                .FormBorderStyle = FormBorderStyle.FixedDialog,
+                .MinimizeBox = False, .MaximizeBox = False,
+                .ShowInTaskbar = False, .ClientSize = New Size(420, 180)
+            }
 
             Dim fontCustom As New Font("Segoe UI", 10.0F, FontStyle.Regular)
 
             Dim lbl As New Label With {
-            .AutoSize = False, .Text = message,
-            .Location = New Point(12, 12), .Size = New Size(396, 90),
-            .Font = fontCustom
-        }
+                .AutoSize = False, .Text = message,
+                .Location = New Point(12, 12), .Size = New Size(396, 90),
+                .Font = fontCustom
+            }
 
             Dim chk As New CheckBox With {.Text = "I accept", .Location = New Point(12, 110), .Font = fontCustom}
 
             Dim btnOk As New Button With {
-            .Text = "Continue", .DialogResult = DialogResult.OK, .Enabled = False,
-            .Size = New Size(110, 28),
-            .Location = New Point(f.ClientSize.Width - 122, f.ClientSize.Height - 36),
-            .Anchor = AnchorStyles.Bottom Or AnchorStyles.Right, .Font = fontCustom
-        }
+                .Text = "Continue", .DialogResult = DialogResult.OK, .Enabled = False,
+                .Size = New Size(110, 28),
+                .Location = New Point(f.ClientSize.Width - 122, f.ClientSize.Height - 36),
+                .Anchor = AnchorStyles.Bottom Or AnchorStyles.Right, .Font = fontCustom
+            }
 
             AddHandler chk.CheckedChanged, Sub() btnOk.Enabled = chk.Checked
             f.Controls.AddRange({lbl, chk, btnOk})
@@ -324,7 +425,7 @@ Public Class frm_login
 
             Return f.ShowDialog(Me) = DialogResult.OK
 
-        Catch ex As Exception
+        Catch
             Return False
         End Try
     End Function
@@ -342,18 +443,15 @@ Public Class frm_login
         Return False
     End Function
 
+    Private Sub SyncShowHideBackColor(sender As Object, e As EventArgs)
+        If picShowHide Is Nothing OrElse picShowHide.Parent Is Nothing Then Exit Sub
+        Dim parentColor As Color = picShowHide.Parent.BackColor
+        picShowHide.BackColor = parentColor
+    End Sub
+
+    ' ===== UI niceties =====
     Private Sub cmdChange_Click(sender As Object, e As EventArgs) Handles cmdChange.Click
         dtp_date.Enabled = True
-    End Sub
-
-    Private Sub cmdOK_Click(sender As Object, e As EventArgs) Handles cmdOK.Click
-        cmdOK_Click()
-    End Sub
-
-    Private Sub txtUserName_KeyDown(sender As Object, e As KeyEventArgs) Handles txtUserName.KeyDown, txtPassword.KeyDown
-        If e.KeyCode = Keys.Enter Then
-            cmdOK_Click()
-        End If
     End Sub
 
     Private Sub btClose_Click(sender As Object, e As EventArgs) Handles btClose.Click
@@ -380,13 +478,5 @@ Public Class frm_login
         Panel4.BackColor = Color.White
         txtUserName.BackColor = SystemColors.Control
         Panel3.BackColor = SystemColors.Control
-    End Sub
-
-    Private Sub PictureBox3_MouseDown(sender As Object, e As MouseEventArgs) Handles PictureBox3.MouseDown
-        txtPassword.UseSystemPasswordChar = False
-    End Sub
-
-    Private Sub PictureBox3_MouseUp(sender As Object, e As MouseEventArgs) Handles PictureBox3.MouseUp
-        txtPassword.UseSystemPasswordChar = True
     End Sub
 End Class

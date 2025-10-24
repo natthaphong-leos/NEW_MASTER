@@ -171,32 +171,33 @@ Partial Class frmLineProperties
         '
         'lblHint1
         '
-        Me.lblHint1.AutoSize = True
+        Me.lblHint1.Font = New System.Drawing.Font("Tahoma", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblHint1.ForeColor = System.Drawing.Color.Red
-        Me.lblHint1.Location = New System.Drawing.Point(73, 232)
+        Me.lblHint1.Location = New System.Drawing.Point(71, 245)
         Me.lblHint1.Name = "lblHint1"
-        Me.lblHint1.Size = New System.Drawing.Size(95, 13)
+        Me.lblHint1.Size = New System.Drawing.Size(103, 13)
         Me.lblHint1.TabIndex = 14
-        Me.lblHint1.Text = "* = AND | + = OR"
+        Me.lblHint1.Text = "OR : |        AND : &&"
+        Me.lblHint1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'btnAnd
         '
-        Me.btnAnd.Location = New System.Drawing.Point(255, 235)
+        Me.btnAnd.Location = New System.Drawing.Point(247, 240)
         Me.btnAnd.Name = "btnAnd"
-        Me.btnAnd.Size = New System.Drawing.Size(42, 23)
+        Me.btnAnd.Size = New System.Drawing.Size(50, 24)
         Me.btnAnd.TabIndex = 15
-        Me.btnAnd.Tag = "*"
+        Me.btnAnd.Tag = "&"
         Me.btnAnd.Text = "AND"
         Me.btnAnd.UseVisualStyleBackColor = True
         '
         'btnOr
         '
         Me.btnOr.BackColor = System.Drawing.Color.PaleGreen
-        Me.btnOr.Location = New System.Drawing.Point(207, 235)
+        Me.btnOr.Location = New System.Drawing.Point(197, 240)
         Me.btnOr.Name = "btnOr"
-        Me.btnOr.Size = New System.Drawing.Size(42, 23)
+        Me.btnOr.Size = New System.Drawing.Size(50, 24)
         Me.btnOr.TabIndex = 16
-        Me.btnOr.Tag = "+"
+        Me.btnOr.Tag = "|"
         Me.btnOr.Text = "OR"
         Me.btnOr.UseVisualStyleBackColor = False
         '

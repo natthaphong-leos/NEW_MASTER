@@ -438,82 +438,6 @@ Public Class MDI_FRM
         End Try
     End Sub
 #End Region
-
-#Region " >>> CUSTOM CALL/CLOSE EXE <<<"
-
-    Private ReadOnly lastOpenedExeNames_Other As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
-
-    ' ===================================== NOTE =====================================
-    ' ROUTE ไม่ต้องเรียกผ่าน Custom_OpenApp Scada จะเรียกจาก Properties ของ control ใน frm
-    ' แต่ถ้าเป็นพวก Start Batch / Get Report / Alarm ต้องเรียกผ่าน Custom_OpenApp
-    ' Job Assignment สำหรับหน้า Start Batch ยังต้องเรียกผ่าน Job_Assignment_StartBatch 
-    ' ================================================================================
-
-    Public Sub Job_Assignment_StartBatch()
-        'io.Open_Application("Job_Assignment", "ROUTE |BATCHING_1|BATCHING_2|")
-    End Sub
-
-    Public Sub Custom_OpenApp()
-        Try
-            ' อ่าน App.config สำหรับเรียกกรณี Start Batch
-            Boolean.TryParse(ConfigurationManager.AppSettings("Start_Batch"), Call_StartBatch_EXE)
-
-            If Start_Batch_Status And Call_StartBatch_EXE Then
-                'io.Open_Application_For_START_BATCH("TAT01_START_BATCHING_1_MIXER_1", " 1 ZR89900 localhost ASA BATCHING_1 MIXER_1 AUTO")
-                'io.Open_Application_For_START_BATCH("TAT01_START_BATCHING_2_MIXER_2", " 1 ZR90500 localhost ASA BATCHING_2 MIXER_2 AUTO")
-            End If
-
-            If Get_Report_Status = True Then
-                'io.Open_Application_For_GET_REPORT("GET_REPORT_BATCHING_MIX1", "GET_REPORT_1 " & UserLogon_.UserName & "")
-                'io.Open_Application_For_GET_REPORT("GET_REPORT_BATCHING_MIX2", "GET_REPORT_2 " & UserLogon_.UserName & "")
-            End If
-
-            If Alarm_Status = True Then
-                With StrMqtt_Config_
-                    'io.Open_Application_For_Alarm_Scale("SCALE_1", .TmpConfig & " Scale_1 " & UserLogon_.UserName & " BATCHING_1")
-                    'io.Open_Application_For_Alarm_Scale("SCALE_2", .TmpConfig & " Scale_2 " & UserLogon_.UserName & " BATCHING_1")
-                    'io.Open_Application_For_Alarm_Scale("SCALE_3", .TmpConfig & " Scale_3 " & UserLogon_.UserName & " BATCHING_1")
-                    'io.Open_Application_For_Alarm_Scale("SCALE_6", .TmpConfig & " Scale_6 " & UserLogon_.UserName & " BATCHING_1")
-                    'io.Open_Application_For_Alarm_Scale("SCALE_7", .TmpConfig & " Scale_7 " & UserLogon_.UserName & " BATCHING_1")
-                    'io.Open_Application_For_Alarm_Surgebin("SURGEBIN_1", .TmpConfig & " SurgeBin_1 " & UserLogon_.UserName & " BATCHING_1")
-                    'io.Open_Application_For_Alarm_Surgebin("SURGEBIN_4", .TmpConfig & " SurgeBin_4 " & UserLogon_.UserName & " BATCHING_1")
-                    'io.Open_Application_For_Alarm_Surgebin("SURGEBIN_5", .TmpConfig & " SurgeBin_5 " & UserLogon_.UserName & " BATCHING_1")
-                    'io.Open_Application_For_Alarm_Handadd("HANDADD_1", .TmpConfig & " Handadd_1 " & UserLogon_.UserName & " BATCHING_1")
-                    'io.Open_Application_For_Alarm_Mixer("MIXER_1", .TmpConfig & " Mixer1 " & UserLogon_.UserName & " BATCHING_1")
-                    'io.Open_Application_For_Alarm_Liquid("LIQUID_1", .TmpConfig & " Liquid_1 " & UserLogon_.UserName & " BATCHING_1")
-                    'io.Open_Application_For_Alarm_Liquid("LIQUID_2", .TmpConfig & " Liquid_2 " & UserLogon_.UserName & " BATCHING_1")
-                End With
-            End If
-
-        Catch ex As Exception
-            Try : LogError.writeErr("Custom Open App: " & ex.Message) : Catch : End Try
-        End Try
-    End Sub
-
-    Public Sub Custom_CloseApp()
-        Try
-            'io.CloseEXE("TAT01_START_BATCHING_1_MIXER_1")
-            'io.CloseEXE("Job_Assignment")
-            'io.CloseEXE("GET_REPORT_BATCHING_MIX1")
-            'io.CloseEXE("TAT01_SCALE_1_PARAMETER_ALARM_SCALE")
-            'io.CloseEXE("TAT01_SCALE_2_PARAMETER_ALARM_SCALE")
-            'io.CloseEXE("TAT01_SCALE_3_PARAMETER_ALARM_SCALE")
-            'io.CloseEXE("TAT01_SCALE_6_PARAMETER_ALARM_SCALE")
-            'io.CloseEXE("TAT01_SCALE_7_PARAMETER_ALARM_SCALE")
-            'io.CloseEXE("TAT01_MIXER_1_PARAMETER_ALARM_MIXER")
-            'io.CloseEXE("TAT01_SURGEBIN_1_PARAMETER_ALARM_SURGEBIN")
-            'io.CloseEXE("TAT01_SURGEBIN_4_PARAMETER_ALARM_SURGEBIN")
-            'io.CloseEXE("TAT01_SURGEBIN_5_PARAMETER_ALARM_SURGEBIN")
-            'io.CloseEXE("TAT01_HANDADD_1_PARAMETER_ALARM_HANDADD")
-            'io.CloseEXE("TAT01_LIQUID_1_PARAMETER_ALARM_LIQUID")
-            'io.CloseEXE("TAT01_LIQUID_2_PARAMETER_ALARM_LIQUID")
-            If frmAlarm_Des_New IsNot Nothing Then frmAlarm_Des_New.Close()
-        Catch ex As Exception
-            Try : LogError.writeErr("Custom Close App: " & ex.Message) : Catch : End Try
-        End Try
-    End Sub
-#End Region
-
 #Region "# GET ROUTE PROPERTIES"
     ' เก็บชื่อ exe ที่เปิดล่าสุด แยก Conveyer / Batching
     Private ReadOnly lastOpenedExeNames_Conveyer As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
@@ -705,9 +629,9 @@ Public Class MDI_FRM
                 .DbPass = CStr(reader.GetValue("PASSWORD", GetType(String)))
                 .MqttUser = CStr(reader.GetValue("MqttUser", GetType(String)))
                 .MqttPass = CStr(reader.GetValue("MqttPass", GetType(String)))
-                .TmpConfig = " " & CStr(.StationMqtt) & " " & CStr(.IpAddressMqtt) & " " & CStr(.MqttUser) & " " & CStr(.MqttPass) & " "
-                .RouteConfig = CBool(reader.GetValue("RouteConfig", GetType(Boolean)))
                 .HardLock = CBool(reader.GetValue("HardLock", GetType(Boolean)))
+                .TmpConfig = " " & CStr(.StationMqtt) & " " & CStr(.IpAddressMqtt) & " " & CStr(.MqttUser) & " " & CStr(.MqttPass) & " "
+                .RouteConfig = CBool(reader.GetValue("Route_Config", GetType(Boolean)))
                 .Mode_TestIO = CBool(reader.GetValue("Mode_TestIO", GetType(Boolean)))
                 .Confirm_TestIO = CBool(reader.GetValue("Confirm_TestIO", GetType(Boolean)))
             End With
@@ -827,9 +751,9 @@ Public Class MDI_FRM
     End Sub
 
     Public Async Sub SelectP1()
-        If tsIntakeP2.Visible = True Then
-            tsIntakeP1.Enabled = False
-            tsIntakeP2.Enabled = False
+        If btnPage_2.Visible = True Then
+            btnPage_1.Enabled = False
+            btnPage_2.Enabled = False
 
             ' หน่วงเวลา
             Await Task.Delay(1000)
@@ -850,15 +774,15 @@ Public Class MDI_FRM
                 frm_Page_1.BringToFront()
             End If
 
-            tsIntakeP1.Enabled = True
-            tsIntakeP2.Enabled = True
+            btnPage_1.Enabled = True
+            btnPage_2.Enabled = True
         End If
     End Sub
 
     Public Async Sub SelectP2()
-        If tsIntakeP1.Visible = True Then
-            tsIntakeP1.Enabled = False
-            tsIntakeP2.Enabled = False
+        If btnPage_1.Visible = True Then
+            btnPage_1.Enabled = False
+            btnPage_2.Enabled = False
 
             ' หน่วงเวลา
             Await Task.Delay(1000)
@@ -879,14 +803,14 @@ Public Class MDI_FRM
                 frm_Page_2.BringToFront()
             End If
 
-            tsIntakeP1.Enabled = True
-            tsIntakeP2.Enabled = True
+            btnPage_1.Enabled = True
+            btnPage_2.Enabled = True
         End If
     End Sub
 
     Private Function HasSecondPage() As Boolean
         Try
-            Return (tsIntakeP2 IsNot Nothing AndAlso tsIntakeP2.Visible AndAlso
+            Return (btnPage_2 IsNot Nothing AndAlso btnPage_2.Visible AndAlso
                     Frm_arr_extend IsNot Nothing AndAlso Frm_arr_extend.Length >= 2 AndAlso
                     Frm_arr_extend(1) IsNot Nothing AndAlso Not Frm_arr_extend(1).IsDisposed)
         Catch
@@ -1322,11 +1246,11 @@ Public Class MDI_FRM
         Return list
     End Function
 
-    Private Sub tsIntakeP1_Click(sender As Object, e As EventArgs) Handles tsIntakeP1.Click
+    Private Sub btnPage_1_Click(sender As Object, e As EventArgs) Handles btnPage_1.Click
         SelectP1()
     End Sub
 
-    Private Sub tsIntakeP2_Click(sender As Object, e As EventArgs) Handles tsIntakeP2.Click
+    Private Sub btnPage_2_Click(sender As Object, e As EventArgs) Handles btnPage_2.Click
         SelectP2()
     End Sub
 
@@ -1592,4 +1516,80 @@ Public Class MDI_FRM
         End If
     End Sub
 #End Region
+
+#Region " >>> CUSTOM CALL/CLOSE EXE <<<"
+
+    Private ReadOnly lastOpenedExeNames_Other As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
+
+    ' ===================================== NOTE =====================================
+    ' ROUTE ไม่ต้องเรียกผ่าน Custom_OpenApp Scada จะเรียกจาก Properties ของ control ใน frm
+    ' แต่ถ้าเป็นพวก Start Batch / Get Report / Alarm ต้องเรียกผ่าน Custom_OpenApp
+    ' Job Assignment สำหรับหน้า Start Batch ยังต้องเรียกผ่าน Job_Assignment_StartBatch 
+    ' ================================================================================
+
+    Public Sub Job_Assignment_StartBatch()
+        'io.Open_Application("Job_Assignment", "ROUTE |BATCHING_1|BATCHING_2|")
+    End Sub
+
+    Public Sub Custom_OpenApp()
+        Try
+            ' อ่าน App.config สำหรับเรียกกรณี Start Batch
+            Boolean.TryParse(ConfigurationManager.AppSettings("Start_Batch"), Call_StartBatch_EXE)
+
+            If Start_Batch_Status And Call_StartBatch_EXE Then
+                'io.Open_Application_For_START_BATCH("TAT01_START_BATCHING_1_MIXER_1", " 1 ZR89900 localhost ASA BATCHING_1 MIXER_1 AUTO")
+                'io.Open_Application_For_START_BATCH("TAT01_START_BATCHING_2_MIXER_2", " 1 ZR90500 localhost ASA BATCHING_2 MIXER_2 AUTO")
+            End If
+
+            If Get_Report_Status = True Then
+                'io.Open_Application_For_GET_REPORT("GET_REPORT_BATCHING_MIX1", "GET_REPORT_1 " & UserLogon_.UserName & "")
+                'io.Open_Application_For_GET_REPORT("GET_REPORT_BATCHING_MIX2", "GET_REPORT_2 " & UserLogon_.UserName & "")
+            End If
+
+            If Alarm_Status = True Then
+                With StrMqtt_Config_
+                    'io.Open_Application_For_Alarm_Scale("SCALE_1", .TmpConfig & " Scale_1 " & UserLogon_.UserName & " BATCHING_1")
+                    'io.Open_Application_For_Alarm_Scale("SCALE_2", .TmpConfig & " Scale_2 " & UserLogon_.UserName & " BATCHING_1")
+                    'io.Open_Application_For_Alarm_Scale("SCALE_3", .TmpConfig & " Scale_3 " & UserLogon_.UserName & " BATCHING_1")
+                    'io.Open_Application_For_Alarm_Scale("SCALE_6", .TmpConfig & " Scale_6 " & UserLogon_.UserName & " BATCHING_1")
+                    'io.Open_Application_For_Alarm_Scale("SCALE_7", .TmpConfig & " Scale_7 " & UserLogon_.UserName & " BATCHING_1")
+                    'io.Open_Application_For_Alarm_Surgebin("SURGEBIN_1", .TmpConfig & " SurgeBin_1 " & UserLogon_.UserName & " BATCHING_1")
+                    'io.Open_Application_For_Alarm_Surgebin("SURGEBIN_4", .TmpConfig & " SurgeBin_4 " & UserLogon_.UserName & " BATCHING_1")
+                    'io.Open_Application_For_Alarm_Surgebin("SURGEBIN_5", .TmpConfig & " SurgeBin_5 " & UserLogon_.UserName & " BATCHING_1")
+                    'io.Open_Application_For_Alarm_Handadd("HANDADD_1", .TmpConfig & " Handadd_1 " & UserLogon_.UserName & " BATCHING_1")
+                    'io.Open_Application_For_Alarm_Mixer("MIXER_1", .TmpConfig & " Mixer1 " & UserLogon_.UserName & " BATCHING_1")
+                    'io.Open_Application_For_Alarm_Liquid("LIQUID_1", .TmpConfig & " Liquid_1 " & UserLogon_.UserName & " BATCHING_1")
+                    'io.Open_Application_For_Alarm_Liquid("LIQUID_2", .TmpConfig & " Liquid_2 " & UserLogon_.UserName & " BATCHING_1")
+                End With
+            End If
+
+        Catch ex As Exception
+            Try : LogError.writeErr("Custom Open App: " & ex.Message) : Catch : End Try
+        End Try
+    End Sub
+
+    Public Sub Custom_CloseApp()
+        Try
+            'io.CloseEXE("TAT01_START_BATCHING_1_MIXER_1")
+            'io.CloseEXE("Job_Assignment")
+            'io.CloseEXE("GET_REPORT_BATCHING_MIX1")
+            'io.CloseEXE("TAT01_SCALE_1_PARAMETER_ALARM_SCALE")
+            'io.CloseEXE("TAT01_SCALE_2_PARAMETER_ALARM_SCALE")
+            'io.CloseEXE("TAT01_SCALE_3_PARAMETER_ALARM_SCALE")
+            'io.CloseEXE("TAT01_SCALE_6_PARAMETER_ALARM_SCALE")
+            'io.CloseEXE("TAT01_SCALE_7_PARAMETER_ALARM_SCALE")
+            'io.CloseEXE("TAT01_MIXER_1_PARAMETER_ALARM_MIXER")
+            'io.CloseEXE("TAT01_SURGEBIN_1_PARAMETER_ALARM_SURGEBIN")
+            'io.CloseEXE("TAT01_SURGEBIN_4_PARAMETER_ALARM_SURGEBIN")
+            'io.CloseEXE("TAT01_SURGEBIN_5_PARAMETER_ALARM_SURGEBIN")
+            'io.CloseEXE("TAT01_HANDADD_1_PARAMETER_ALARM_HANDADD")
+            'io.CloseEXE("TAT01_LIQUID_1_PARAMETER_ALARM_LIQUID")
+            'io.CloseEXE("TAT01_LIQUID_2_PARAMETER_ALARM_LIQUID")
+            If frmAlarm_Des_New IsNot Nothing Then frmAlarm_Des_New.Close()
+        Catch ex As Exception
+            Try : LogError.writeErr("Custom Close App: " & ex.Message) : Catch : End Try
+        End Try
+    End Sub
+#End Region
+
 End Class

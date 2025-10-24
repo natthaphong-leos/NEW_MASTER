@@ -144,64 +144,6 @@ Public Class frm_Page_2
         End If
     End Sub
 #End Region
-
-#Region " >>> MANUAL EDITCODE <<< "
-
-    ' ===================================== NOTE =====================================
-    ' FunctionWithTimer() สำหรับเรียกฟังก์ชันที่ต้องการให้ทำงานทุก ๆ ครั้งที่ Timer_Run tick
-    ' ถ้าเป็นไปได้ พยายามเขียนโค้ดให้อยู่ใน Region " >>> MANUAL EDITCODE <<< " 
-    ' ================================================================================
-
-    Public Sub FunctionWithTimer()
-        ' Call ReadWeightSC()
-        ' Call ShowData_OPtimoist()
-
-        'txt_target_SC16.Text = Format((CtrlScale_16.mqtt_AlarmScale_.TARGET_WEIGHT) / 1000, "0.00")
-        'txt_actual_SC16.Text = Format((CtrlScale_16.mqtt_AlarmScale_.ACTUAL_WEIGHT) / 1000, "0.00")
-        'txt_ingred_sc16.Text = CtrlScale_16.mqtt_AlarmScale_.INGRED_CODE
-    End Sub
-
-    Private Sub Show_Line()
-        '   === SCALE 1 ถัง
-        'Scada.ShowGraphic(CtrlTAT_185.status_run And CtrlTAT_190.status_run, "81,82,83")
-        'Scada.ShowGraphic(CtrlTAT_182.status_run Or CtrlTAT_183.status_run Or CtrlTAT_184.status_run Or CtrlTAT_185.status_run, "84")
-        'Scada.ShowGraphic(CtrlTAT_186.status_run Or CtrlTAT_187.status_run Or CtrlTAT_188.status_run Or CtrlTAT_189.status_run, "73")
-        'Scada.ShowGraphic(CtrlTAT_193.status_run And CtrlTAT_194.status_run, "85,86,87,88,89")
-        'If (Line183.Visible = True) Or (Line186.Visible = True) Or (Line188.Visible = True) Then
-        '    Line184.Visible = True
-        'Else
-        '    Line184.Visible = False
-        'End If
-    End Sub
-
-    Private Sub ReadWeightSC()
-        'txtSC_16.Text = CtrlScale_16.mqtt_AlarmScale_.SCALE_WEIGHT / 1000
-        'txtTarSC16.Text = CtrlScale_16.mqtt_AlarmScale_.TARGET_WEIGHT / 1000
-        'txtActSC16.Text = CtrlScale_16.mqtt_AlarmScale_.ACTUAL_WEIGHT / 1000
-        'txtProd_SC16.Text = CtrlScale_16.mqtt_AlarmScale_.PRODUCTION_RUN & " " & CtrlScale_16.mqtt_AlarmScale_.BATCH_COUNT & " / " & CtrlScale_16.mqtt_AlarmScale_.BATCH_PRESET
-    End Sub
-
-    Private Sub btn_HM1_Click(sender As Object, e As EventArgs)
-        'If CtrlPID_1.Visible = False Then
-        '    CtrlPID_1.Visible = True
-        '    LblAnalog_13.Visible = True
-        'Else
-        '    CtrlPID_1.Visible = False
-        '    LblAnalog_13.Visible = False
-        'End If
-    End Sub
-
-    Private Sub btn_HM2_Click(sender As Object, e As EventArgs)
-        'If CtrlPID_2.Visible = False Then
-        '    CtrlPID_2.Visible = True
-        '    LblAnalog_15.Visible = True
-        'Else
-        '    CtrlPID_2.Visible = False
-        '    LblAnalog_15.Visible = False
-        'End If
-    End Sub
-#End Region
-
 #Region "READ PLC"
     Private Sub BW_ReadPLC_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles BW_ReadPLC.DoWork
         Try
@@ -823,4 +765,21 @@ Public Class frm_Page_2
         _HasChanges = False
     End Sub
 #End Region
+
+#Region " >>> MANUAL EDITCODE <<< "
+
+    ' ===================================== NOTE =====================================
+    ' FunctionWithTimer() สำหรับเรียกฟังก์ชันที่ต้องการให้ทำงานทุก ๆ ครั้งที่ Timer_Run tick
+    ' ถ้าเป็นไปได้ พยายามเขียนโค้ดให้อยู่ใน Region " >>> MANUAL EDITCODE <<< " 
+    ' ================================================================================
+
+    Public Sub FunctionWithTimer()
+        ' WRITE YOUR CODE HERE
+    End Sub
+
+    Private Sub Show_Line()
+        ' WRITE YOUR CODE HERE
+    End Sub
+#End Region
+
 End Class

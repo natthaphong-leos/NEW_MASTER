@@ -1,7 +1,9 @@
 ﻿Module mdlLineFunction
     Public Ctrl_Hiden As Boolean = False
     Public Lst_HidenCtrl As New List(Of Control)
-    Public defaultCondition As String = "+"
+
+    ' ใช้แบบใหม่เป็นค่าเริ่มต้น (OR = "|")
+    Public defaultCondition As String = "|"
 
     Public Sub Hide_All_Control(ByRef frm As Form)
         For Each ctrl As Control In frm.Controls
@@ -13,6 +15,7 @@
             End If
         Next
     End Sub
+
     Public Sub Show_Hiden_Control()
         For Each ctrl As Control In Lst_HidenCtrl
             ctrl.Visible = True
@@ -20,12 +23,20 @@
         Lst_HidenCtrl.Clear()
     End Sub
 
+    ' ====== NEW: แปลง operator legacy (*,+) -> ใหม่ (&,|) ======
+    Private Function NormalizeOperators(expr As String) As String
+        If String.IsNullOrWhiteSpace(expr) Then Return expr
+        Return expr.Replace("*", "&").Replace("+", "|")
+    End Function
+
+    ' tokenize รองรับเฉพาะ (&,|) หลัง normalize แล้ว
     Private Function Tokenize(expr As String) As List(Of String)
         Dim tokens As New List(Of String)
         Dim sb As New System.Text.StringBuilder()
+
         For Each ch As Char In expr.Replace(" ", "")
             Select Case ch
-                Case "("c, ")"c, "*"c, "+"c
+                Case "("c, ")"c, "&"c, "|"c
                     If sb.Length > 0 Then
                         tokens.Add(sb.ToString())
                         sb.Clear()
@@ -35,18 +46,16 @@
                     sb.Append(ch)
             End Select
         Next
+
         If sb.Length > 0 Then tokens.Add(sb.ToString())
         Return tokens
     End Function
 
     Private Function Precedence(op As String) As Integer
         Select Case op
-            Case "*"
-                Return 2 ' AND
-            Case "+"
-                Return 1 ' OR
-            Case Else
-                Return 0
+            Case "&" : Return 2 ' AND
+            Case "|" : Return 1 ' OR
+            Case Else : Return 0
         End Select
     End Function
 
@@ -55,7 +64,7 @@
         Dim ops As New Stack(Of String)
 
         For Each tok In tokens
-            If tok = "*" OrElse tok = "+" Then
+            If tok = "&" OrElse tok = "|" Then
                 While ops.Count > 0 AndAlso ops.Peek() <> "(" AndAlso Precedence(ops.Peek()) >= Precedence(tok)
                     output.Add(ops.Pop())
                 End While
@@ -66,7 +75,7 @@
                 While ops.Count > 0 AndAlso ops.Peek() <> "("
                     output.Add(ops.Pop())
                 End While
-                If ops.Count > 0 AndAlso ops.Peek() = "(" Then ops.Pop() ' pop "("
+                If ops.Count > 0 AndAlso ops.Peek() = "(" Then ops.Pop()
             Else
                 ' identifier (control name)
                 output.Add(tok)
@@ -76,27 +85,18 @@
         While ops.Count > 0
             output.Add(ops.Pop())
         End While
+
         Return output
     End Function
 
     Private Function GetControlState(parent As Control, key As String) As Boolean
         ' หา control ตามชื่อ (ค้นลึกทั้งลูกหลาน)
         Dim arr = parent.Controls.Find(key, True)
+
+        ' กรณีเป็น LINE* ให้เช็คจากคอลเลกชัน line ในฟอร์ม
         Dim field = parent.GetType().GetField("_lines", Reflection.BindingFlags.Public Or Reflection.BindingFlags.Instance)
         Dim line As TatLine = Nothing
-        'If field IsNot Nothing Then
-        '    Dim lines = TryCast(field.GetValue(parent), List(Of TatLine))
-        '    If lines IsNot Nothing Then
-        '        line = lines.FirstOrDefault(Function(l) String.Equals(l.Name, key, StringComparison.OrdinalIgnoreCase))
-        '    End If
-        'End If
-        'Dim line As TatLine = _lines.FirstOrDefault(Function(l) String.Equals(l.Name, key, StringComparison.OrdinalIgnoreCase))
-        'If arr Is Nothing OrElse arr.Length = 0 Then
-        '    If line IsNot Nothing Then
-        '        Return line.Visible
-        '    End If
-        '    Return False
-        'End If
+
         If UCase(Left(key, 4)) = "LINE" Then
             If field IsNot Nothing Then
                 Dim lines = TryCast(field.GetValue(parent), List(Of TatLine))
@@ -110,6 +110,11 @@
             Return False
         End If
 
+        ' คุม NRE เมื่อหาไม่เจอ
+        If arr Is Nothing OrElse arr.Length = 0 Then
+            Return False
+        End If
+
         Dim ctrl As Control = arr(0)
         If TypeOf ctrl Is CheckBox Then
             Return DirectCast(ctrl, CheckBox).Checked
@@ -118,7 +123,6 @@
         Else
             Return ctrl.Visible
         End If
-
     End Function
 
     Private Function EvalRPN(rpn As List(Of String), parent As Control) As Boolean
@@ -128,10 +132,10 @@
 
         For Each tok In rpn
             Select Case tok
-                Case "*"
+                Case "&"
                     Dim b = st.Pop() : Dim a = st.Pop()
                     st.Push(a AndAlso b)
-                Case "+"
+                Case "|"
                     Dim b = st.Pop() : Dim a = st.Pop()
                     st.Push(a OrElse b)
                 Case Else
@@ -143,14 +147,17 @@
                     st.Push(val)
             End Select
         Next
+
         Return If(st.Count > 0, st.Pop(), False)
     End Function
     ' ===== End utilities =====
 
     ' เรียกใช้จากฟังก์ชันเดิมของโอม
     Public Function LineVisibilityCondition(tmpCondition As String, parent As Control) As Boolean
-        Dim expr As String = tmpCondition
-        If String.IsNullOrWhiteSpace(expr) Then Return False  ' ไม่มีเงื่อนไข = แสดง
+        If String.IsNullOrWhiteSpace(tmpCondition) Then Return False  ' ไม่มีเงื่อนไข = แสดง
+
+        ' รองรับของเก่า (*,+) โดย normalize เป็น (&,|)
+        Dim expr As String = NormalizeOperators(tmpCondition)
 
         Dim tokens = Tokenize(expr)
         Dim rpn = ToRPN(tokens)

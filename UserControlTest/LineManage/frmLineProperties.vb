@@ -7,12 +7,15 @@ Public Class frmLineProperties
     ' ยิงผลกลับให้ฟอร์มหลัก
     Public Event LineApplied(result As TatLine)   ' กด Apply
     Public Event LineCommitted(result As TatLine) ' กด OK
-    'Private defaultCondition As String = "+"
+
+    ' ==== NEW: operator tokens ====
+    Private Const AND_OP As String = "&"
+    Private Const OR_OP As String = "|"
+    Private defaultCondition As String = OR_OP
 
     Public Sub New(line As Object)
-
         _original = line
-        ' Create a shallow copy for editing
+        ' Create a shallow copy for editing (ถ้าต้องการ deep clone ให้แก้ตรงนี้)
         _working = line
 
         InitializeComponent()
@@ -38,27 +41,39 @@ Public Class frmLineProperties
         Return CInt(0.2126 * c.R + 0.7152 * c.G + 0.0722 * c.B)
     End Function
 
-
     ' =========================
     ' Mapping between UI <-> clsTATLine (ADJUST HERE to fit your model)
     ' =========================
     Private Sub LoadFromLine(line As Object)
         If line Is Nothing Then Return
 
+        ' ตั้งค่า KeyPreview ไว้รับ Alt+Shortcut
+        Me.KeyPreview = True
+
+        ' ตั้งค่า Tag ปุ่ม (กันลืมตั้งใน Designer)
+        If String.IsNullOrEmpty(CStr(btnAnd.Tag)) Then btnAnd.Tag = AND_OP
+        If String.IsNullOrEmpty(CStr(btnOr.Tag)) Then btnOr.Tag = OR_OP
 
         ' Try common property names via late-binding to avoid compile errors if your class differs.
         txtName.Text = GetPropString(line, "Name", GetPropString(line, "LineName", ""))
         nudWidth.Value = CDec(GetPropSingle(line, "Width", GetPropSingle(line, "PenWidth", 2.0F)))
         Dim color As Color = GetPropColor(line, "Color", GetPropColor(line, "LineColor", Color.Lime))
         btnColor.BackColor = color
-        txtCondition.Text = GetPropString(line, "Condition", "")
-        'chkVisible.Checked = GetPropBool(line, "Visible", True)
-        'nudZ.Value = CDec(GetPropInt(line, "ZIndex", 0))
 
+        ' ==== NEW: แปลง legacy (* / +) -> (& / |) ตอนโหลดขึ้นจอ
+        Dim rawCond As String = GetPropString(line, "Condition", "")
+        txtCondition.Text = MapLegacyToNew(rawCond)
 
         Dim styleName As String = GetPropEnumName(Of DashStyle)(line, "DashStyle", "Solid")
         Dim idx = cmbStyle.FindStringExact(styleName)
-        If idx >= 0 Then cmbStyle.SelectedIndex = idx Else cmbStyle.SelectedIndex = cmbStyle.FindStringExact("Solid")
+        If idx >= 0 Then
+            cmbStyle.SelectedIndex = idx
+        Else
+            cmbStyle.SelectedIndex = cmbStyle.FindStringExact("Solid")
+        End If
+
+        ' ตั้งสีปุ่มตาม defaultCondition
+        ApplyDefaultButtonsColor()
     End Sub
 
     Private Sub SaveIntoLine(line As Object)
@@ -68,41 +83,20 @@ Public Class frmLineProperties
         SetProp(line, "PenWidth", CSng(nudWidth.Value))
         SetProp(line, "Color", btnColor.BackColor)
         SetProp(line, "LineColor", btnColor.BackColor)
-        SetProp(line, "Condition", txtCondition.Text)
-        'SetProp(line, "Visible", chkVisible.Checked)
-        'SetProp(line, "ZIndex", CInt(nudZ.Value))
 
+        ' ==== NEW: บันทึกกลับเป็นรูปแบบใหม่ (& / |)
+        SetProp(line, "Condition", txtCondition.Text)
 
         Dim ds As DashStyle = CType([Enum].Parse(GetType(DashStyle), CStr(cmbStyle.SelectedItem)), DashStyle)
         SetProp(line, "DashStyle", ds)
     End Sub
 
-
-    'Private Sub frmLineProperties_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
-    '    If Me.DialogResult = DialogResult.OK Then
-    '        ' Validate here if needed
-    '        'If String.IsNullOrWhiteSpace(txtName.Text) Then
-    '        '    MessageBox.Show(Me, "Please enter a line name.", "Validation", MessageBoxButtons.OK, MessageBoxIcon.Information)
-    '        '    e.Cancel = True
-    '        '    Return
-    '        'End If
-    '        SaveIntoLine(_working)
-    '    End If
-    'End Sub
-
     Private Sub btnOK_Click(sender As Object, e As EventArgs) Handles btnOK.Click
-        ' Explicit OK path (so it also works if you used Show instead of ShowDialog)
-        'If String.IsNullOrWhiteSpace(txtName.Text) Then
-        '    MessageBox.Show(Me, "Please enter a line name.", "Validation", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        '    Return
-        'End If
-        'SaveIntoLine(_working)
-        'RaiseEvent LineApplied(_working)
         SaveIntoLine(_working)
-        RaiseEvent LineCommitted(_working)
-        Me.DialogResult = DialogResult.OK ' if modal, this will close automatically
-        'Me.Close()
+        RaiseEvent LineCommitted(_working) ' ถ้าต้องการ strict ให้ CType(_working, TatLine)
+        Me.DialogResult = DialogResult.OK
     End Sub
+
     Private Sub btnApply_Click(sender As Object, e As EventArgs) Handles btnApply.Click
         SaveIntoLine(_working)
         RaiseEvent LineApplied(_working)
@@ -113,7 +107,6 @@ Public Class frmLineProperties
         Me.Close()
     End Sub
 
-
 #Region "Late-binding helpers"
     Private Shared Function GetPropString(obj As Object, name As String, Optional [default] As String = "") As String
         Dim pi = obj.GetType().GetProperty(name)
@@ -121,7 +114,6 @@ Public Class frmLineProperties
         Dim v = pi.GetValue(obj, Nothing)
         Return If(v Is Nothing, [default], v.ToString())
     End Function
-
 
     Private Shared Function GetPropSingle(obj As Object, name As String, Optional [default] As Single = 0.0F) As Single
         Dim pi = obj.GetType().GetProperty(name)
@@ -131,7 +123,6 @@ Public Class frmLineProperties
         Return Convert.ToSingle(v)
     End Function
 
-
     Private Shared Function GetPropInt(obj As Object, name As String, Optional [default] As Integer = 0) As Integer
         Dim pi = obj.GetType().GetProperty(name)
         If pi Is Nothing Then Return [default]
@@ -140,7 +131,6 @@ Public Class frmLineProperties
         Return Convert.ToInt32(v)
     End Function
 
-
     Private Shared Function GetPropBool(obj As Object, name As String, Optional [default] As Boolean = False) As Boolean
         Dim pi = obj.GetType().GetProperty(name)
         If pi Is Nothing Then Return [default]
@@ -148,7 +138,6 @@ Public Class frmLineProperties
         If v Is Nothing Then Return [default]
         Return Convert.ToBoolean(v)
     End Function
-
 
     Private Shared Function GetPropColor(obj As Object, name As String, Optional [default] As Color = Nothing) As Color
         Dim pi = obj.GetType().GetProperty(name)
@@ -160,7 +149,6 @@ Public Class frmLineProperties
         Return ColorTranslator.FromWin32(Convert.ToInt32(v))
     End Function
 
-
     Private Shared Function GetPropEnumName(Of T As Structure)(obj As Object, name As String, Optional [default] As String = "") As String
         Dim pi = obj.GetType().GetProperty(name)
         If pi Is Nothing Then Return [default]
@@ -168,7 +156,6 @@ Public Class frmLineProperties
         If v Is Nothing Then Return [default]
         Return v.ToString()
     End Function
-
 
     Private Shared Sub SetProp(obj As Object, name As String, value As Object)
         Dim pi = obj.GetType().GetProperty(name)
@@ -184,6 +171,8 @@ Public Class frmLineProperties
                     value = Convert.ToBoolean(value)
                 ElseIf pi.PropertyType Is GetType(Color) AndAlso TypeOf value IsNot Color Then
                     value = ColorTranslator.FromHtml(value.ToString())
+                ElseIf pi.PropertyType Is GetType(String) Then
+                    value = value.ToString()
                 ElseIf pi.PropertyType.IsEnum Then
                     value = [Enum].Parse(pi.PropertyType, value.ToString())
                 End If
@@ -193,59 +182,69 @@ Public Class frmLineProperties
             ' ignore mapping errors to stay flexible across different clsTATLine definitions
         End Try
     End Sub
-
-
 #End Region
 
-    Public Sub Add_Condition(strObjName)
+    ' ==== NEW: helpers สำหรับ operator แบบใหม่ และ mapping legacy ====
+    Private Shared Function IsNewOp(ch As Char) As Boolean
+        Return ch = CChar(AND_OP) OrElse ch = CChar(OR_OP)
+    End Function
+
+    Private Shared Function MapLegacyToNew(expr As String) As String
+        If String.IsNullOrEmpty(expr) Then Return expr
+        Return expr.Replace("*", AND_OP).Replace("+", OR_OP)
+    End Function
+
+    Public Sub Add_Condition(strObjName As String)
         Me.Activate()
-        If txtCondition.Text.Trim = "" Then
-            txtCondition.Text += strObjName
+        Dim cur As String = txtCondition.Text.Trim()
+
+        If cur = "" Then
+            txtCondition.Text = strObjName
         Else
-            Dim lastCharacter As String = txtCondition.Text.Trim.Substring(txtCondition.Text.Length - 1)
-            If lastCharacter <> "*" AndAlso lastCharacter <> "+" AndAlso lastCharacter <> "(" AndAlso txtCondition.Text <> "" Then
-                txtCondition.Text += defaultCondition & strObjName
+            Dim lastCh As Char = cur(cur.Length - 1)
+            If Not IsNewOp(lastCh) AndAlso lastCh <> "("c Then
+                txtCondition.Text &= defaultCondition & strObjName
             Else
-                txtCondition.Text += strObjName
+                txtCondition.Text &= strObjName
             End If
         End If
     End Sub
 
     Private Sub frmLineProperties_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Select Case defaultCondition
-            Case "+"
-                btnOr.BackColor = Color.PaleGreen
-                btnAnd.BackColor = DefaultBackColor
-            Case "*"
-                btnAnd.BackColor = Color.PaleGreen
-                btnOr.BackColor = DefaultBackColor
-        End Select
+        ' ตั้งสีปุ่มเริ่มต้นตาม defaultCondition
+        ApplyDefaultButtonsColor()
+    End Sub
+
+    Private Sub ApplyDefaultButtonsColor()
+        btnOr.BackColor = If(defaultCondition = OR_OP, Color.PaleGreen, DefaultBackColor)
+        btnAnd.BackColor = If(defaultCondition = AND_OP, Color.PaleGreen, DefaultBackColor)
     End Sub
 
     Private Sub btnOr_And_Click(sender As Object, e As EventArgs) Handles btnOr.Click, btnAnd.Click
         Dim tmpBtn As Button = CType(sender, Button)
-        tmpBtn.BackColor = Color.PaleGreen
-        defaultCondition = tmpBtn.Tag
-        If tmpBtn.Name = "btnOr" Then
-            btnAnd.BackColor = DefaultBackColor
-        ElseIf tmpBtn.Name = "btnAnd" Then
-            btnOr.BackColor = DefaultBackColor
-        End If
+        defaultCondition = CStr(tmpBtn.Tag) ' "|" หรือ "&"
 
-        If txtCondition.Text.Trim <> "" Then
-            Dim tmpCondition As String = DirectCast(sender, Button).Tag
-            Dim lastCharacter As String = txtCondition.Text.Trim.Substring(txtCondition.Text.Length - 1)
-            If lastCharacter <> "*" AndAlso lastCharacter <> "+" Then
-                txtCondition.Text += tmpCondition
+        ' ปรับสี
+        ApplyDefaultButtonsColor()
+
+        ' auto-append operator ถ้าตัวท้ายยังไม่ใช่ operator
+        Dim cur As String = txtCondition.Text.Trim()
+        If cur <> "" Then
+            Dim lastCh As Char = cur(cur.Length - 1)
+            If Not IsNewOp(lastCh) Then
+                txtCondition.Text &= defaultCondition
             End If
         End If
     End Sub
 
     Private Sub frmLineProperties_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
-        If e.KeyCode = Keys.Alt AndAlso e.KeyCode = Keys.A Then
-            txtCondition.Text += "*"
-        ElseIf e.KeyCode = Keys.Alt AndAlso e.KeyCode = Keys.O Then
-            txtCondition.Text += "+"
+        ' ใช้ e.Alt แทนการเช็ค e.KeyCode = Keys.Alt
+        If e.Alt AndAlso e.KeyCode = Keys.A Then
+            txtCondition.Text &= AND_OP
+            e.Handled = True
+        ElseIf e.Alt AndAlso e.KeyCode = Keys.O Then
+            txtCondition.Text &= OR_OP
+            e.Handled = True
         End If
     End Sub
 

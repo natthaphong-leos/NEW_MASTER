@@ -118,32 +118,56 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="UI_SolidGreenDataBar_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_SolidGreenDataBar_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="BG_MainScada" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BG_MainScada.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="UI_Cancel_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_Cancel_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="SYS_MDI_MotorCode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SYS_MDI_MotorCode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_GaugeStyleLinearHorizontal_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_GaugeStyleLinearHorizontal_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SYS_MDI_Exit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SYS_MDI_Exit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_LoginPassword_30x30" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_LoginPassword_30x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_Forward_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_Forward_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LOGO_SmartBatching" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LOGO_SmartBatching.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UI_SolidOrangeDataBar_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_SolidOrangeDataBar_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="UI_TouchMode_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_TouchMode_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="UI_MoveDown_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_MoveDown_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="UI_Edit_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_Edit_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="SYS_MDI_BinCode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SYS_MDI_BinCode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="UI_Refresh_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_Refresh_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SmartFeedmill" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SmartFeedmill.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="UI_Reading_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_Reading_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UI_GaugeShowCaptions_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_GaugeShowCaptions_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="UI_Stop_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_Stop_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="SYS_MDI_Extend" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SYS_MDI_Extend.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_Delete_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_Delete_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_PageSetup_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_PageSetup_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_SetRedToBlack_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_SetRedToBlack_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SYS_MDI_Page" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SYS_MDI_Page.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UI_Redo_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_Redo_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -151,92 +175,62 @@
   <data name="UI_Next_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_Next_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="UI_GaugeStyleLinearVertical_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_GaugeStyleLinearVertical_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UI_GaugeStyleLinearHorizontal_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_GaugeStyleLinearHorizontal_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UI_Forward_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_Forward_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UI_Delete_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_Delete_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UI_GaugeStyleRightQuarterCircular_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_GaugeStyleRightQuarterCircular_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UI_GaugeStyleHalfCircular_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_GaugeStyleHalfCircular_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UI_Apply_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_Apply_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="SYS_WarningTriangle" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SYS_WarningTriangle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UI_Play_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_Play_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="UI_GaugeStyleThreeForthCircular_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_GaugeStyleThreeForthCircular_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UI_Reading_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_Reading_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UI_MoveUp_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_MoveUp_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UI_PageSetup_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_PageSetup_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UI_GaugeStyleFullCircular_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_GaugeStyleFullCircular_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UI_Technology_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_Technology_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UI_MoveDown_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_MoveDown_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="SmartFeedmill" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SmartFeedmill.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UI_DocumentMap_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_DocumentMap_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="UI_MoveUp_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_MoveUp_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_Apply_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_Apply_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="UI_Recurrence_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_Recurrence_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BG_MainScada" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\BG_MainScada.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="UI_Technology_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_Technology_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="UI_LoginPassword_30x30" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_LoginPassword_30x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="UI_GaugeStyleLinearVertical_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_GaugeStyleLinearVertical_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="UI_SetRedToBlack_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_SetRedToBlack_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="UI_Edit_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_Edit_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="UI_LoginUser_30x30" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_LoginUser_30x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="UI_Refresh_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_Refresh_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="LOGO_SmartBatching" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\LOGO_SmartBatching.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SYS_MDI_BinCode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SYS_MDI_BinCode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SYS_MDI_Exit" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SYS_MDI_Exit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SYS_MDI_Extend" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SYS_MDI_Extend.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SYS_MDI_ProductionTime" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SYS_MDI_ProductionTime.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="UI_Stop_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_Stop_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SYS_MDI_JobAssgnment" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SYS_MDI_JobAssgnment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SYS_MDI_Page" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SYS_MDI_Page.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="SYS_MDI_ProductionTime" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SYS_MDI_ProductionTime.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_EyeOpen_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_EyeOpen_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_SolidGreenDataBar_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_SolidGreenDataBar_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_GaugeStyleHalfCircular_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_GaugeStyleHalfCircular_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_LoginUser_30x30" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_LoginUser_30x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_GaugeStyleRightQuarterCircular_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_GaugeStyleRightQuarterCircular_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SYS_MDI_Login" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SYS_MDI_Login.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -244,10 +238,22 @@
   <data name="SYS_MDI_Logout" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SYS_MDI_Logout.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SYS_MDI_MotorCode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SYS_MDI_MotorCode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="SYS_AlarmIcon_256x256" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SYS_AlarmIcon_256x256.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_GaugeStyleThreeForthCircular_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_GaugeStyleThreeForthCircular_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_Cancel_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_Cancel_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_GaugeStyleFullCircular_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_GaugeStyleFullCircular_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_TouchMode_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_TouchMode_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UI_EyeClose_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_EyeClose_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
