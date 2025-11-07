@@ -16,7 +16,14 @@ Imports System.Linq
 Imports TAT_CtrlRoute
 Imports uPLibrary.Networking.M2Mqtt
 
-'MDI FORM UPDATE BY: NATTHAPHONG 27/09/2025
+' =============== PATH NOTES ===============
+' - FIXED BUG VARIABLE DOUBLE READ MQTT
+' - UPDATE CONFIRM TEST IO WITH NEW PROCEDURE
+' - UPDATE frm_login WITH NEW PERMISSION
+' ==========================================
+
+' MDI FORM UPDATE BY: NATTHAPHONG 07/11/2025
+
 Public Class MDI_FRM
 #Region "# BUTTON OTHER"
     Private Sub ToolBarToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles ToolBarToolStripMenuItem.Click
@@ -103,8 +110,6 @@ Public Class MDI_FRM
     Private tmpMinute As Long
     Private tmpCheckHardLock As Boolean = False
 
-    Public frm_Page_1 As frm_Page_1 = New frm_Page_1()
-    Public frm_Page_2 As frm_Page_2 = New frm_Page_2()
     Public CnBatching As clsDB
 
     Private locationValue As String
@@ -161,12 +166,40 @@ Public Class MDI_FRM
     Private Async Sub MDIParent1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.WindowState = FormWindowState.Maximized
         Try
-            Me.Enabled = False
+            DisableControlsDuringLoad(True)
+
             Await InitializeAsync().ConfigureAwait(True)
             ShowPagesAfterShown()
+
+            DisableControlsDuringLoad(False)
+
         Catch ex As Exception
             Try : LogError.writeErr("Load/InitializeAsync: " & ex.ToString()) : Catch : End Try
             MessageBox.Show("Failed to initialize: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.[Error])
+        Finally
+            DisableControlsDuringLoad(False)
+        End Try
+    End Sub
+
+    ' ===== Method =====
+    Private Sub DisableControlsDuringLoad(disable As Boolean)
+        Try
+            ' Disable/Enable
+            If ToolStrip_Top IsNot Nothing Then
+                ToolStrip_Top.Enabled = Not disable
+            End If
+
+            ' Loading cursor
+            If disable Then
+                Me.UseWaitCursor = True
+                Me.Cursor = Cursors.WaitCursor
+            Else
+                Me.UseWaitCursor = False
+                Me.Cursor = Cursors.Default
+            End If
+
+        Catch ex As Exception
+            Try : LogError.writeErr("DisableControlsDuringLoad: " & ex.ToString()) : Catch : End Try
         End Try
     End Sub
 
@@ -308,8 +341,6 @@ Public Class MDI_FRM
                                        Close_EXE()
                                        splash?.SetProgress(90)
                                    End Sub)
-
-                        ' Threading.Thread.Sleep(200)
 
                     Catch ex As Exception
                         If Error_Check Then Return

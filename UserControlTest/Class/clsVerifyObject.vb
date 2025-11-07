@@ -121,10 +121,12 @@ Public Class clsVerifyObject
         strSQL += "@Pm_location = '" & $"{ctrl.Location.X},{ctrl.Location.Y}" & "' "
         cnDB.ExecuteNoneQuery(strSQL)
     End Sub
+
     Public Sub Update_Ctrl_Detail_Changed(ByRef ctrl As TAT_MQTT_CTRL.ctrlTAT_)
         Dim strSQL As String = "Exec dbo.FD_Update_ObjectList_Detail "
         strSQL += "@Pm_app_name = '" & AppName & "', "
         strSQL += "@Pm_obj_name = '" & ctrl.Name & "', "
+        strSQL += "@Pm_motor_code = '" & ctrl.M_Code & "', "
         strSQL += "@Pm_type = '" & ctrl.ControlType.ToString & "', "
         strSQL += "@Pm_index = '" & ctrl.Index & "', "
         strSQL += "@Pm_plc_station = '" & ctrl.PLC_Station_No & "', "

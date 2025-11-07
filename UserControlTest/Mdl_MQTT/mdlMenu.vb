@@ -1368,7 +1368,12 @@ Retry_PLC:
 
         '================================================== FOR KEEP LOG
         strCommand = "Call_EXE(""Manual Operate Bin"", " & strFull_Cmd_Line & ", " & tmpCtrl.ControlType.ToString & "_" & tmpCtrl.Index & ")"
-        Try
+        Try                '=========== FOr test Function Test_IO
+            If Mode_Test_IO = True Then
+                If Check_Already_Test(ctrlMotor_tmp, CnBatching) = False Then
+                    func_start_test(ctrlMotor_tmp, CnBatching, UserLogon_.UserName)
+                End If
+            End If
             Call_EXE("Manual Operate Bin", strFull_Cmd_Line, tmpCtrl.ControlType.ToString & "_" & tmpCtrl.Index)
             '================================================== FOR KEEP LOG
             WriteLog_Menu(strMenu, deviceName, machineCode, strCommand, ret)
@@ -1396,6 +1401,12 @@ Retry_PLC:
         '================================================== FOR KEEP LOG
         strCommand = "Call_EXE(""Manual Operate LQ"", " & tmpCmd_Line & ", " & tmpCtrl.ControlType.ToString & "_" & tmpCtrl.Index & ")"
         Try
+            '=========== FOr test Function Test_IO
+            If Mode_Test_IO = True Then
+                If Check_Already_Test(ctrlMotor_tmp, CnBatching) = False Then
+                    func_start_test(ctrlMotor_tmp, CnBatching, UserLogon_.UserName)
+                End If
+            End If
             Call_EXE("Manual Operate LQ", tmpCmd_Line, tmpCtrl.ControlType.ToString & "_" & tmpCtrl.Index)
             '================================================== FOR KEEP LOG
             WriteLog_Menu(strMenu, deviceName, machineCode, strCommand, ret)

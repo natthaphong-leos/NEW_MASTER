@@ -9,38 +9,24 @@
         cnDB = DB
         UserName = cUser
         AddHandler tmpCtrl.OnStatusChanged, AddressOf Ctrl_StatusChangedAsync
-        'Ctrl_StatusChanged() ' เช็คสถานะทันทีที่สร้าง
         CallProcedure_StartTest()
         tmpCtrl.Status_Test_IO = TAT_MQTT_CTRL.ctrlTAT_.Enum_Status_TestIO.NOT_SUCCESS
     End Sub
 
     ' Event Handler เมื่อสถานะเปลี่ยน
     Private Async Function Ctrl_StatusChangedAsync() As Task
-        If tmpCtrl Is Nothing Then
-            Exit Function
-        End If
+        If tmpCtrl Is Nothing Then Exit Function
+
         ' ถ้า Status = Output ไม่ต้องทำอะไร
         If Replace(tmpCtrl.Status.ToString, "_", "") = "out" Then
-
             Exit Function
         End If
 
         ' ถ้า Status = run อัปเดตผลการทดสอบ
         If Replace(tmpCtrl.Status.ToString, "_", "") = "run" Then
             If Opt_Confirm_TestIO = True Then
-                Dim frmConfirm As New frmConfirmTest(tmpCtrl, cnDB, UserName)
-                frmConfirm.ShowDialog(MDI_FRM)
-                Application.DoEvents()
-                frmConfirm.BringToFront()
-
-                'If MsgBox("Is this device test successfull ?", MsgBoxStyle.YesNo, "Confirm Result") = MsgBoxResult.Yes Then
-                '    Await CallProcedure_UpdateTestResult()
-                'Else
-                '    '====== Input comment and update test fail
-                '    Dim Comment As String
-                '    Comment = InputBox("Please input your comment", "Input comment")
-                '    Await CallProcedure_UpdateTestComment(Comment)
-                'End If
+                ' ===== เรียกผ่าน UI Thread เท่านั้น =====
+                ShowConfirmDialogSafe()
             Else
                 Await CallProcedure_UpdateTestResult()
                 tmpCtrl.Status_Test_IO = TAT_MQTT_CTRL.ctrlTAT_.Enum_Status_TestIO.TEST_SUCCESS
@@ -50,6 +36,53 @@
             DisposeClass()
         End If
     End Function
+
+    ' ===== เพิ่ม Method ใหม่สำหรับแสดง Dialog =====
+    Private Sub ShowConfirmDialogSafe()
+        Try
+            ' ตรวจสอบว่าต้อง Invoke หรือไม่
+            If Application.OpenForms.Count > 0 Then
+                Dim mainForm As Form = Application.OpenForms(0)
+                If mainForm IsNot Nothing AndAlso mainForm.InvokeRequired Then
+                    mainForm.Invoke(New Action(AddressOf ShowDialogCore))
+                Else
+                    ShowDialogCore()
+                End If
+            Else
+                ShowDialogCore()
+            End If
+
+        Catch ex As Exception
+            ' Log error ถ้ามี
+            Debug.WriteLine($"ShowConfirmDialogSafe Error: {ex.Message}")
+        End Try
+    End Sub
+
+    ' ===== Core Method สำหรับแสดง Dialog =====
+    Private Sub ShowDialogCore()
+        Try
+            Using frmConfirm As New frmConfirmTest(tmpCtrl, cnDB, UserName)
+                ' ตั้งค่าให้ Dialog เป็นอิสระจาก MDI
+                With frmConfirm
+                    .StartPosition = FormStartPosition.CenterScreen
+                    .TopMost = True
+                    .ShowInTaskbar = True
+                    .FormBorderStyle = FormBorderStyle.FixedDialog
+                    .MaximizeBox = False
+                    .MinimizeBox = False
+                End With
+
+                ' แสดง Dialog โดยไม่ส่ง Owner
+                frmConfirm.ShowDialog()
+
+                Application.DoEvents()
+            End Using
+
+        Catch ex As Exception
+            ' Log error ถ้ามี
+            Debug.WriteLine($"ShowDialogCore Error: {ex.Message}")
+        End Try
+    End Sub
 
     ' ฟังก์ชันอัปเดตผลคอมมเนต์เมื่อเทสต้องการให้เทสไม่ผ่าน
     Private Async Function CallProcedure_UpdateTestComment(ByVal strComment As String) As Task
@@ -61,20 +94,16 @@
         strSQL += "@Pm_User = '" & UserName & "', "
         strSQL += "@Pm_Comment = N'" & strComment & "'"
         cnDB.ExecuteNoneQuery(strSQL)
-
     End Function
 
     ' ฟังก์ชันอัปเดตผลการทดสอบ
     Private Async Function CallProcedure_UpdateTestResult() As Task
-        ' ใส่โค้ดที่ต้องการให้ทำเมื่อทดสอบสำเร็จ
         Dim strSQL As String = "Exec dbo.FD_Update_TestIO "
         strSQL += "@Pm_type = '" & tmpCtrl.ControlType.ToString & "', "
         strSQL += "@Pm_index = '" & tmpCtrl.Index & "', "
         strSQL += "@Pm_plc_station = '" & tmpCtrl.PLC_Station_No & "', "
         strSQL += "@Pm_User = '" & UserName & "'"
         cnDB.ExecuteNoneQuery(strSQL)
-
-        'MsgBox("TEST SUCCESS")
     End Function
 
     Private Async Function CallProcedure_StartTest() As Task
@@ -88,13 +117,8 @@
 
     ' ฟังก์ชันทำลายคลาส
     Private Sub DisposeClass()
-        ' ลบ Event Handler
         RemoveHandler tmpCtrl.OnStatusChanged, AddressOf Ctrl_StatusChangedAsync
-
-        ' ลบ instance ออกจาก Dictionary
         mdlTest_IO.RemoveInstance(tmpCtrl)
-
-        ' เคลียร์ตัวแปร
         tmpCtrl = Nothing
         Me.Finalize()
     End Sub

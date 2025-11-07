@@ -97,7 +97,8 @@ Public Class frmProgressInsert
             '    MainVerifier.Update_Ctrl_New_Device(ctrl)
             '    Return True
         ElseIf ctrl.Parent.Name <> row("c_parent_obj") OrElse
-            $"{ctrl.Location.X},{ctrl.Location.Y}" <> row("c_location") Then
+            $"{ctrl.Location.X},{ctrl.Location.Y}" <> row("c_location") OrElse
+            ctrl.M_Code <> row("motor_code").ToString Then
             MainVerifier.Update_Ctrl_Detail_Changed(ctrl)
             Return True
         End If
