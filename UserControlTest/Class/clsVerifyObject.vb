@@ -126,7 +126,6 @@ Public Class clsVerifyObject
         Dim strSQL As String = "Exec dbo.FD_Update_ObjectList_Detail "
         strSQL += "@Pm_app_name = '" & AppName & "', "
         strSQL += "@Pm_obj_name = '" & ctrl.Name & "', "
-        strSQL += "@Pm_motor_code = '" & ctrl.M_Code & "', "
         strSQL += "@Pm_type = '" & ctrl.ControlType.ToString & "', "
         strSQL += "@Pm_index = '" & ctrl.Index & "', "
         strSQL += "@Pm_plc_station = '" & ctrl.PLC_Station_No & "', "
