@@ -500,4 +500,48 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <!-- Calculate the version number in the same way as AssemblyVersion("1.0.*") -->
+  <UsingTask TaskName="ComputeAutoVersion"
+             TaskFactory="CodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <Major ParameterType="System.Int32" Required="true" />
+      <Minor ParameterType="System.Int32" Required="true" />
+      <Result Output="true" ParameterType="System.String" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        // Same algorithm as 1.0.*: days since 2000-01-01 (LOCAL), seconds/2 since midnight (LOCAL)
+        var now = DateTime.Now;
+        var days = (now.Date - new DateTime(2000,1,1)).Days;
+        var rev  = (int)(now - now.Date).TotalSeconds / 2;
+        Result = string.Format("{0}.{1}.{2}.{3}", Major, Minor, days, rev);
+      ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <!-- Create a VB file with Product version = [COMPUTER] - [autoVersion] -->
+  <Target Name="InjectProductVersion" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <GeneratedInfo>$(IntermediateOutputPath)BuildInfo.vb</GeneratedInfo>
+      <!-- Major/Minor must match AssemblyVersion("1.0.*") -->
+      <Major>1</Major>
+      <Minor>0</Minor>
+    </PropertyGroup>
+
+    <ComputeAutoVersion Major="$(Major)" Minor="$(Minor)">
+      <Output PropertyName="AutoAsmVersion" TaskParameter="Result" />
+    </ComputeAutoVersion>
+
+    <WriteLinesToFile File="$(GeneratedInfo)" Overwrite="true"
+                      Lines="Imports System.Reflection" />
+    <WriteLinesToFile File="$(GeneratedInfo)" Overwrite="false"
+                      Lines="&lt;Assembly: AssemblyInformationalVersion(&quot;[$(COMPUTERNAME)] - $(AutoAsmVersion)&quot;)&gt;" />
+
+    <ItemGroup>
+      <Compile Include="$(GeneratedInfo)" />
+    </ItemGroup>
+  </Target>
 </Project>
