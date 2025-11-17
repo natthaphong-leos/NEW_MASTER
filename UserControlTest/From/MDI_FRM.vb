@@ -24,7 +24,7 @@ Imports uPLibrary.Networking.M2Mqtt
 ' - FIXED BUG OPEN ALARM DESCRIPTION
 ' ==========================================
 
-' MDI FORM UPDATE BY: NATTHAPHONG 07/11/2025
+' MDI FORM UPDATE BY: NATTHAPHONG 17/11/2025
 
 Public Class MDI_FRM
 #Region "# BUTTON OTHER"
