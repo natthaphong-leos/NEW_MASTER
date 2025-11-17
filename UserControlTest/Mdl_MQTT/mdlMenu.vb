@@ -1397,7 +1397,7 @@ Retry_PLC:
 
         Dim tmpCmd_Line As String
 
-        tmpCmd_Line = tmpCtrl.PLC_Station_No & " LIQUID " & tmpCtrl.OP_LQ_Name & " " & tmpCtrl.Ad_Output
+        tmpCmd_Line = tmpCtrl.PLC_Station_No & " LIQUID " & tmpCtrl.OP_LQ_Name & " " & tmpCtrl.Ad_Output & " " & UserLogon_.UserCode
         '================================================== FOR KEEP LOG
         strCommand = "Call_EXE(""Manual Operate LQ"", " & tmpCmd_Line & ", " & tmpCtrl.ControlType.ToString & "_" & tmpCtrl.Index & ")"
         Try
@@ -1646,7 +1646,7 @@ Retry_PLC:
         End Select
 
         Dim strCmd_Line As String
-        strCmd_Line = StrMqtt_Config_.StationMqtt & " " & sName & " " & TmpName
+        strCmd_Line = StrMqtt_Config_.StationMqtt & " " & sName & " " & TmpName & " " & UserLogon_.UserCode
         '================================================== FOR KEEP LOG
         strCommand = "Call_EXE(""Parameter_Config," & TmpName & """, " & strCmd_Line & ")"
         If strCmd_Line <> "" Then

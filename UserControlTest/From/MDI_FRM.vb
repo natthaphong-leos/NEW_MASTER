@@ -21,6 +21,7 @@ Imports uPLibrary.Networking.M2Mqtt
 ' - UPDATE CONFIRM TEST IO WITH NEW PROCEDURE
 ' - UPDATE frm_login WITH NEW PERMISSION
 ' - ADD ASSEMBLY CREATER VERSION
+' - FIXED BUG OPEN ALARM DESCRIPTION
 ' ==========================================
 
 ' MDI FORM UPDATE BY: NATTHAPHONG 07/11/2025
@@ -411,11 +412,15 @@ Public Class MDI_FRM
 #End Region
 #Region "# LOG ON EVENT"
     Public Sub Is_Logon()
+
         EnsureCnBatching()
+
         If Not CnBatching.TestConnection() Then
             MessageBox.Show("Database Not Connected. Please check network or configuration file.", "DB Error", MessageBoxButtons.OK, MessageBoxIcon.[Error])
             Exit Sub
         End If
+
+        Custom_CloseApp()
 
         frmAlarm_Des_New = New frmAlarm_Description({frm_Page_1, frm_Page_2}, CnBatching)
         frmAlarm_Des_New.Show()
@@ -456,7 +461,6 @@ Public Class MDI_FRM
                 End If
             End If
 
-            Custom_CloseApp()
             Custom_OpenApp()
 
         Catch ex As Exception
