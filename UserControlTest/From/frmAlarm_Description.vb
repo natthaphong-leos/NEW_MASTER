@@ -1,5 +1,7 @@
 ﻿Imports System.Globalization
 Imports System.IO
+Imports System.Linq
+Imports System.Data
 
 Public Class frmAlarm_Description
     Private frmScada() As Form
@@ -77,9 +79,29 @@ Public Class frmAlarm_Description
 
 #Region "Changed Language In Data table"
     Private Sub Changed_language_in_DT(ByVal strLangCode As String, ByRef cnDB As clsDB)
+        If dtAlarm.Rows.Count = 0 Then Exit Sub
+
+        ' cDescription ที่ไม่ซ้ำกันก่อน
+        Dim distinctMsg = dtAlarm.AsEnumerable().
+                          Select(Function(r) CheckNull(r("cDescription"))).
+                          Where(Function(s) s <> "").
+                          Distinct(StringComparer.OrdinalIgnoreCase).
+                          ToList()
+
+        ' เก็บไว้ใน Dictionary
+        Dim dicTranslate As New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase)
+
+        For Each msg As String In distinctMsg
+            Dim txt = Query_Text_By_LanguageCode(msg, strLangCode, cnDB)
+            dicTranslate(msg) = UCase(txt)
+        Next
+
+        ' วนทุกแถวแล้วใช้ค่าใน Dictionary แทน
         For Each row As DataRow In dtAlarm.Rows
-            Dim tmpMsg As String = row("cDescription")
-            row("cDescription") = UCase(Query_Text_By_LanguageCode(tmpMsg, strLangCode, cnDB)) 'For Multi Language
+            Dim tmpMsg As String = CheckNull(row("cDescription"))
+            If tmpMsg <> "" AndAlso dicTranslate.ContainsKey(tmpMsg) Then
+                row("cDescription") = dicTranslate(tmpMsg)
+            End If
         Next
     End Sub
 #End Region

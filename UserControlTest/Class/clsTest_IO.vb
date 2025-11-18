@@ -14,28 +14,32 @@
     End Sub
 
     ' Event Handler เมื่อสถานะเปลี่ยน
-    Private Async Function Ctrl_StatusChangedAsync() As Task
-        If tmpCtrl Is Nothing Then Exit Function
+    Private Async Sub Ctrl_StatusChangedAsync()
+        Try
+            If tmpCtrl Is Nothing Then Exit Sub
 
-        ' ถ้า Status = Output ไม่ต้องทำอะไร
-        If Replace(tmpCtrl.Status.ToString, "_", "") = "out" Then
-            Exit Function
-        End If
+            Dim statusText As String = Replace(tmpCtrl.Status.ToString(), "_", "").ToLowerInvariant()
 
-        ' ถ้า Status = run อัปเดตผลการทดสอบ
-        If Replace(tmpCtrl.Status.ToString, "_", "") = "run" Then
-            If Opt_Confirm_TestIO = True Then
-                ' ===== เรียกผ่าน UI Thread เท่านั้น =====
-                ShowConfirmDialogSafe()
-            Else
-                Await CallProcedure_UpdateTestResult()
-                tmpCtrl.Status_Test_IO = TAT_MQTT_CTRL.ctrlTAT_.Enum_Status_TestIO.TEST_SUCCESS
+            ' ถ้า Status = Output ไม่ต้องทำอะไร
+            If statusText = "out" Then
+                Exit Sub
             End If
-            DisposeClass()
-        Else
-            DisposeClass()
-        End If
-    End Function
+
+            ' ถ้า Status = run อัปเดตผลการทดสอบ
+            If statusText = "run" Then
+                If Opt_Confirm_TestIO = True Then
+                    ShowConfirmDialogSafe()
+                Else
+                    Await CallProcedure_UpdateTestResult()
+                    tmpCtrl.Status_Test_IO = TAT_MQTT_CTRL.ctrlTAT_.Enum_Status_TestIO.TEST_SUCCESS
+                End If
+
+                DisposeClass()
+            Else
+                DisposeClass()
+            End If
+        Catch ex As Exception : End Try
+    End Sub
 
     ' ===== เพิ่ม Method ใหม่สำหรับแสดง Dialog =====
     Private Sub ShowConfirmDialogSafe()

@@ -127,6 +127,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
@@ -191,12 +192,6 @@
     <Compile Include="Class\cls_MXComponent_RQ.vb" />
     <Compile Include="Class\cls_MXCompronent.vb" />
     <Compile Include="Class\cls_scada_Control.vb" />
-    <Compile Include="From\Alarm_Des.designer.vb">
-      <DependentUpon>Alarm_Des.vb</DependentUpon>
-    </Compile>
-    <Compile Include="From\Alarm_Des.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="From\frmAlarm_Description.Designer.vb">
       <DependentUpon>frmAlarm_Description.vb</DependentUpon>
     </Compile>
@@ -326,10 +321,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="From\Alarm_Des.resx">
-      <DependentUpon>Alarm_Des.vb</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="From\frmAlarm_Description.resx">
       <DependentUpon>frmAlarm_Description.vb</DependentUpon>
       <SubType>Designer</SubType>
@@ -492,7 +483,7 @@
   <ItemGroup>
     <None Include="Resources\UI_EyeClose_32x32.png" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+ <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -500,48 +491,56 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <!-- Calculate the version number in the same way as AssemblyVersion("1.0.*") -->
-  <UsingTask TaskName="ComputeAutoVersion"
-             TaskFactory="CodeTaskFactory"
-             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+  <!-- ===== Calculate version 1.0.* ===== -->
+  <UsingTask TaskName="ComputeAutoVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
       <Major ParameterType="System.Int32" Required="true" />
       <Minor ParameterType="System.Int32" Required="true" />
       <Result Output="true" ParameterType="System.String" />
     </ParameterGroup>
     <Task>
-      <Code Type="Fragment" Language="cs">
-        <![CDATA[
-        // Same algorithm as 1.0.*: days since 2000-01-01 (LOCAL), seconds/2 since midnight (LOCAL)
-        var now = DateTime.Now;
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        // AssemblyVersion("1.0.*")
+        var now  = DateTime.Now;
         var days = (now.Date - new DateTime(2000,1,1)).Days;
         var rev  = (int)(now - now.Date).TotalSeconds / 2;
-        Result = string.Format("{0}.{1}.{2}.{3}", Major, Minor, days, rev);
-      ]]>
-      </Code>
+        Result   = string.Format("{0}.{1}.{2}.{3}", Major, Minor, days, rev);
+        ]]></Code>
     </Task>
   </UsingTask>
-
-  <!-- Create a VB file with Product version = [COMPUTER] - [autoVersion] -->
-  <Target Name="InjectProductVersion" BeforeTargets="CoreCompile">
+  <!-- ===== Dynamic AssemblyInformationalVersion (แยกไฟล์ BuildInfo) ===== -->
+  <ItemGroup>
+    <Compile Include="My Project\AssemblyInfo.BuildInfo.vb" Condition="Exists('$(ProjectDir)My Project\AssemblyInfo.BuildInfo.vb')" />
+  </ItemGroup>
+  <Target Name="InjectBuildInfo" BeforeTargets="CoreCompile">
     <PropertyGroup>
-      <GeneratedInfo>$(IntermediateOutputPath)BuildInfo.vb</GeneratedInfo>
-      <!-- Major/Minor must match AssemblyVersion("1.0.*") -->
+      <AsmInfoFile>$(ProjectDir)My Project\AssemblyInfo.BuildInfo.vb</AsmInfoFile>
+      <!-- Major / Minor to be used as 1.X.*.* -->
       <Major>1</Major>
       <Minor>0</Minor>
     </PropertyGroup>
-
+    <!-- [1] Get git user.name -->
+    <Exec Command="git config --get user.name" ConsoleToMSBuild="true" IgnoreExitCode="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="GitUserNameRaw" />
+      <Output TaskParameter="ExitCode" PropertyName="GitUserNameExitCode" />
+    </Exec>
+    <PropertyGroup>
+      <GitUserName>$(GitUserNameRaw)</GitUserName>
+      <GitUserNameTrimmed>$([System.String]::Copy('$(GitUserName)').Trim())</GitUserNameTrimmed>
+    </PropertyGroup>
+    <!-- [2] If there is no git user.name, the build fails -->
+    <Error Condition="'$(GitUserNameExitCode)' != '0' Or '$(GitUserNameTrimmed)' == ''" Text="Git user.name is not configured. Please run: git config --global user.name &quot;Your Name&quot;" />
+    <!-- [3] Calculate AutoVersion: 1.0.x.x -->
     <ComputeAutoVersion Major="$(Major)" Minor="$(Minor)">
       <Output PropertyName="AutoAsmVersion" TaskParameter="Result" />
     </ComputeAutoVersion>
-
-    <WriteLinesToFile File="$(GeneratedInfo)" Overwrite="true"
-                      Lines="Imports System.Reflection" />
-    <WriteLinesToFile File="$(GeneratedInfo)" Overwrite="false"
-                      Lines="&lt;Assembly: AssemblyInformationalVersion(&quot;[$(COMPUTERNAME)] - $(AutoAsmVersion)&quot;)&gt;" />
-
-    <ItemGroup>
-      <Compile Include="$(GeneratedInfo)" />
-    </ItemGroup>
+    <!-- [4] Always rewrite the entire BuildInfo file -->
+    <!-- Format: Major.Minor.days.rev - [GitUserName] -->
+    <Message Text="Writing new AssemblyInformationalVersion for $(GitUserNameTrimmed)..." Importance="high" />
+    <WriteLinesToFile File="$(AsmInfoFile)" Overwrite="true" Lines="&lt;Assembly: System.Reflection.AssemblyInformationalVersion(&quot;$(AutoAsmVersion) - [$(GitUserNameTrimmed)]&quot;)&gt;" />
+  </Target>
+  <!-- [5] Log when Build is complete -->
+  <Target Name="LogBuildUser" AfterTargets="Build" Condition="'$(GitUserNameTrimmed)' != '' AND '$(AutoAsmVersion)' != ''">
+    <Message Text="***** Build Version $(AutoAsmVersion) by $(GitUserNameTrimmed) *****" Importance="high" />
   </Target>
 </Project>

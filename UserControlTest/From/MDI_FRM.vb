@@ -89,7 +89,6 @@ Public Class MDI_FRM
     Private Const EXE_SUFFIX_CONVEYER As String = "_ROUTECONTROL_Conveyer"
     Private Const EXE_SUFFIX_BATCHING As String = "_ROUTECONTROL_Batching"
 
-    Public frm_Alarm_Des As Alarm_Des
     Public frmAlarm_Des_New As frmAlarm_Description
 
     Private frm1 As Boolean
