@@ -22,9 +22,11 @@ Imports uPLibrary.Networking.M2Mqtt
 ' - UPDATE frm_login WITH NEW PERMISSION
 ' - ADD ASSEMBLY CREATER VERSION
 ' - FIXED BUG OPEN ALARM DESCRIPTION
+' - ADD NEW INLINE mnuSelectParameter AND FIXED BUG
+' - ADD AUTO LOGON SUB EXE
 ' ==========================================
 
-' MDI FORM UPDATE BY: NATTHAPHONG 17/11/2025
+' MDI FORM UPDATE BY: NATTHAPHONG 18/11/2025
 
 Public Class MDI_FRM
 #Region "# BUTTON OTHER"
@@ -440,7 +442,7 @@ Public Class MDI_FRM
 
             If Call_Route_EXE Then
                 If Route_Batching_Status Then
-                    ' เปิดโปรเซสฝั่ง Batching
+                    ' ROUTE BATCHING
                     For Each rn As String In routeNos
                         Dim exeName As String = BuildExeNameFromRoute_Batching(rn)
                         If String.IsNullOrWhiteSpace(exeName) Then Continue For
@@ -450,7 +452,7 @@ Public Class MDI_FRM
                     Next
 
                 Else
-                    ' เปิดโปรเซสฝั่ง Conveyer
+                    ' ROUTE CONVEYER
                     For Each rn As String In routeNos
                         Dim exeName As String = BuildExeNameFromRoute_Conveyer(rn)
                         If String.IsNullOrWhiteSpace(exeName) Then Continue For

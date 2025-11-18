@@ -1364,7 +1364,7 @@ Retry_PLC:
         tmpCmd_Line = Get_Manual_Bin_CmdLine(tmpCtrl.PLC_Station_No, tmpCtrl.OP_Scale_No.ToString, dt_Scale_Parameter_)
         If tmpCmd_Line = "" Then MsgBox("SCALE DATA NOT FOUND")
 
-        strFull_Cmd_Line = tmpCtrl.PLC_Station_No & " " & tmpCtrl.OP_Bin_index.ToString & " " & tmpCtrl.Ad_Output
+        strFull_Cmd_Line = tmpCtrl.PLC_Station_No & " " & tmpCtrl.OP_Bin_index.ToString & " " & tmpCtrl.Ad_Output & " " & UserLogon_.UserCode
 
         '================================================== FOR KEEP LOG
         strCommand = "Call_EXE(""Manual Operate Bin"", " & strFull_Cmd_Line & ", " & tmpCtrl.ControlType.ToString & "_" & tmpCtrl.Index & ")"
@@ -1611,13 +1611,17 @@ Retry_PLC:
         Dim TmpStrName As String
         Dim TmpStrIndex As String
         Dim getStr() As String = Split(ctrlSelect_tmp.mqtt_selectmode_config_.CODE, ".")
-        If getStr.Count = 1 Then
-            TmpStrName = RegularExpressions.Regex.Replace(ctrlSelect_tmp.mqtt_selectmode_config_.CODE, "[^A-Z]", "")
-            TmpStrIndex = RegularExpressions.Regex.Replace(ctrlSelect_tmp.mqtt_selectmode_config_.CODE, "[^0-9]", "")
-        Else
-            TmpStrName = RegularExpressions.Regex.Replace(getStr(1), "[^A-Z]", "")
-            TmpStrIndex = RegularExpressions.Regex.Replace(getStr(1), "[^0-9]", "")
-        End If
+        Select Case getStr.Count
+            Case 1
+                TmpStrName = RegularExpressions.Regex.Replace(ctrlSelect_tmp.mqtt_selectmode_config_.CODE, "[^A-Z]", "")
+                TmpStrIndex = RegularExpressions.Regex.Replace(ctrlSelect_tmp.mqtt_selectmode_config_.CODE, "[^0-9]", "")
+            Case 2
+                TmpStrName = RegularExpressions.Regex.Replace(getStr(1), "[^A-Z]", "")
+                TmpStrIndex = RegularExpressions.Regex.Replace(getStr(1), "[^0-9]", "")
+            Case 3
+                TmpStrName = RegularExpressions.Regex.Replace(getStr(2), "[^A-Z]", "")
+                TmpStrIndex = RegularExpressions.Regex.Replace(getStr(2), "[^0-9]", "")
+        End Select
         Select Case TmpStrName
             Case "SC"
                 TmpName = "SCALE_" & TmpStrIndex
@@ -1634,10 +1638,10 @@ Retry_PLC:
             Case "ML"
                 TmpName = "SCALE_" & TmpStrIndex
                 sName = "MOLASS"
-            Case "LOAD"
+            Case "LOAD", "LD"
                 TmpName = "LOAD_" & TmpStrIndex
                 sName = "LOAD"
-            Case "AUTOMANIL"
+            Case "AUTOMANIL", "INLINE"
                 TmpName = "INLINE_" & TmpStrIndex
                 sName = "INLINE"
             Case Else
@@ -1646,7 +1650,7 @@ Retry_PLC:
         End Select
 
         Dim strCmd_Line As String
-        strCmd_Line = StrMqtt_Config_.StationMqtt & " " & sName & " " & TmpName & " " & UserLogon_.UserCode
+        strCmd_Line = StrMqtt_Config_.StationMqtt & " " & sName & " " & TmpName
         '================================================== FOR KEEP LOG
         strCommand = "Call_EXE(""Parameter_Config," & TmpName & """, " & strCmd_Line & ")"
         If strCmd_Line <> "" Then
@@ -1744,21 +1748,26 @@ strMenu, deviceName, machineCode)
                     intBatchCount = buf(13)
                     If intBatchPreset = 0 Then
                         MsgBox("HAVE NO CURRENT PRODUCTION! ", vbInformation + vbApplicationModal, "Change Batch Preset")
+                        Mx.MxCom(StrMqtt_Config_.StationMqtt).Close()
                         Exit Sub
                     Else
                         Mx.mxDevSetM(Mx.MxCom(StrMqtt_Config_.StationMqtt), as_Mode, 0)
                         li_new_batch = InputBox("PLEASE ENTER NEW BATCH PRESET " & vbCrLf & "MINIMUM IS : " & intBatchCount & " BATCH ", "NEW BATCH PRESET")
                         Mx.mxDevSetM(Mx.MxCom(StrMqtt_Config_.StationMqtt), as_Mode, 1)
                         If li_new_batch = "" Then
+                            Mx.MxCom(StrMqtt_Config_.StationMqtt).Close()
                             Exit Sub
                         ElseIf IsNumeric(li_new_batch) = False Then
                             MsgBox("INVALID NUMBER OF BATCH :   " & li_new_batch & vbCrLf & vbCrLf & "PLEASE ENTER NEW VALUES", vbCritical + vbApplicationModal, "NEW BATCH PRESET")
+                            Mx.MxCom(StrMqtt_Config_.StationMqtt).Close()
                             Exit Sub
                         ElseIf CInt(li_new_batch) > 999 Then
                             MsgBox("INVALID RANGE NUMBER OF BATCH (1-999) " & vbCrLf & "PLEASE ENTER NEW VALUES", vbCritical + vbApplicationModal, "NEW BATCH PRESET")
+                            Mx.MxCom(StrMqtt_Config_.StationMqtt).Close()
                             Exit Sub
                         ElseIf CInt(li_new_batch) < intBatchCount Then
                             MsgBox("PLEASE INPUT MORE THAN CURRENT BATCH! " & vbCrLf & "CURRENT IS " & intBatchCount & " BATCH! >> NEW BATCH IS  " & li_new_batch, vbCritical, "NEW BATCH PRESET")
+                            Mx.MxCom(StrMqtt_Config_.StationMqtt).Close()
                             Exit Sub
                             'ElseIf CInt(li_new_batch) > MaxLengthChagePreset Then
                             '    MsgBox("PLEASE INPUT MORE THAN CURRENT BATCH! " & vbCrLf & "MAXIMUM IS " & MaxLengthChagePreset & " BATCH! >> NEW BATCH IS " & li_new_batch, vbCritical, "NEW BATCH PRESET")
