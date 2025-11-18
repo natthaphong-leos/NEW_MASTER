@@ -16,15 +16,16 @@ Imports System.Linq
 Imports TAT_CtrlRoute
 Imports uPLibrary.Networking.M2Mqtt
 
-' =============== PATH NOTES ===============
-' - FIXED BUG VARIABLE DOUBLE READ MQTT
+' =============== PATH NOTES V 1.0.0 ===============
 ' - UPDATE CONFIRM TEST IO WITH NEW PROCEDURE
 ' - UPDATE frm_login WITH NEW PERMISSION
-' - ADD ASSEMBLY CREATER VERSION
+' - FIXED BUG VARIABLE DOUBLE READ MQTT
 ' - FIXED BUG OPEN ALARM DESCRIPTION
-' - ADD NEW INLINE mnuSelectParameter AND FIXED BUG
+' - FIXED MODULE mdlLanguage
+' - ADD NEW INLINE mnuSelectParameter
 ' - ADD AUTO LOGON SUB EXE
-' ==========================================
+' - ADD ASSEMBLY CREATER VERSION
+' ==================================================
 
 ' MDI FORM UPDATE BY: NATTHAPHONG 18/11/2025
 
