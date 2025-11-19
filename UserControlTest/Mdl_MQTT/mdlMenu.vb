@@ -1650,7 +1650,7 @@ Retry_PLC:
         End Select
 
         Dim strCmd_Line As String
-        strCmd_Line = StrMqtt_Config_.StationMqtt & " " & sName & " " & TmpName
+        strCmd_Line = StrMqtt_Config_.StationMqtt & " " & sName & " " & TmpName & " " & UserLogon_.UserCode
         '================================================== FOR KEEP LOG
         strCommand = "Call_EXE(""Parameter_Config," & TmpName & """, " & strCmd_Line & ")"
         If strCmd_Line <> "" Then
