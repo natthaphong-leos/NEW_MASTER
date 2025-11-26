@@ -175,6 +175,10 @@ Public Class MDI_FRM
             Await InitializeAsync().ConfigureAwait(True)
             ShowPagesAfterShown()
 
+            ' ===== For Multi Language =====
+            AddHandler Langauge_Change, AddressOf ChangeLanguage_InForm
+            ChangeLanguage_InForm(tsCboLanguage.Text, CnBatching)
+
             DisableControlsDuringLoad(False)
 
         Catch ex As Exception
@@ -183,6 +187,13 @@ Public Class MDI_FRM
         Finally
             DisableControlsDuringLoad(False)
         End Try
+    End Sub
+
+    ' ===== For Multi Language =====
+    Private Sub ChangeLanguage_InForm(ByVal strLangCode As String, ByRef cnDB As clsDB)
+        change_language_in_collection(Me.Controls, cnDB, strLangCode, Application.ProductName, Me.Name)
+        change_Object_InterlockMsg_In_collection(Me.Controls, cnDB, strLangCode)
+        change_Object_Control_In_collection(Me.Controls, cnDB, strLangCode, Application.ProductName, Me.Name)
     End Sub
 
     ' ===== Method =====
@@ -423,6 +434,8 @@ Public Class MDI_FRM
         End If
 
         Custom_CloseApp()
+
+        If frmAlarm_Des_New IsNot Nothing Then frmAlarm_Des_New.Close()
 
         frmAlarm_Des_New = New frmAlarm_Description({frm_Page_1, frm_Page_2}, CnBatching)
         frmAlarm_Des_New.Show()
@@ -1304,12 +1317,13 @@ Public Class MDI_FRM
         Await RequestExitAsync(showConfirm:=True)
     End Sub
 
-    Public Async Function RequestExitAsync(Optional showConfirm As Boolean = True) As Task
+    Public Async Function RequestExitAsync(Optional showConfirm As Boolean = True, Optional splashForm As Form = Nothing) As Task
+
         If Me.InvokeRequired Then
             Dim tcs As New TaskCompletionSource(Of Object)()
             Me.BeginInvoke(DirectCast(Async Sub()
                                           Try
-                                              Await RequestExitAsync(showConfirm)
+                                              Await RequestExitAsync(showConfirm, splashForm)
                                               tcs.TrySetResult(Nothing)
                                           Catch ex As Exception
                                               tcs.TrySetException(ex)
@@ -1324,26 +1338,50 @@ Public Class MDI_FRM
 
         Try
             If showConfirm Then
-                Dim res As DialogResult = MessageBox.Show(Me, "Do you want to exit the program?", "Confirm exit", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                Dim res As DialogResult = MessageBox.Show(Me,
+                                                      "Do you want to exit the program?",
+                                                      "Confirm exit",
+                                                      MessageBoxButtons.YesNo,
+                                                      MessageBoxIcon.Question)
                 If res <> DialogResult.Yes Then
                     _isExiting = False
                     Return
                 End If
             End If
 
-            Dim closingForm As New frmClosing()
-            closingForm.Show()
-            closingForm.Refresh()
 
-            AppCts.Cancel()
+            Dim closingForm As Form = Nothing
+
+            If splashForm IsNot Nothing AndAlso Not splashForm.IsDisposed Then
+                Try
+                    ShowCenteredOnScreen(splashForm, Me)
+                Catch
+                    closingForm = Nothing
+                End Try
+            Else
+                Try
+                    closingForm = New frmClosing()
+                    ShowCenteredOnScreen(closingForm, Me)
+                Catch
+                    closingForm = Nothing
+                End Try
+            End If
+
+            Try : AppCts.Cancel() : Catch : End Try
 
             Dim closedGracefully As Boolean = Await SafeShutdownAsync(TimeSpan.FromSeconds(3)).ConfigureAwait(True)
 
-            Try : closingForm.Close() : closingForm.Dispose() : Catch : End Try
+            If closingForm IsNot Nothing Then
+                Try
+                    closingForm.Close()
+                    closingForm.Dispose()
+                Catch
+                End Try
+            End If
 
             Application.Exit()
 
-            Await Task.Delay(1500).ConfigureAwait(False)
+            Await Task.Delay(1000).ConfigureAwait(False)
             If Not closedGracefully Then
                 Try : Process.GetCurrentProcess().Kill() : Catch : End Try
             End If
@@ -1356,6 +1394,7 @@ Public Class MDI_FRM
 
     Private Async Function SafeShutdownAsync(grace As TimeSpan) As Task(Of Boolean)
         Try
+
             Close_EXE()
             StopAllServicesQuiet()
 
@@ -1363,29 +1402,34 @@ Public Class MDI_FRM
 
             For Each f As Form In children
                 Try
-                    Dim mi As MethodInfo = f.GetType().GetMethod("StopInternalServices", BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.NonPublic)
+                    Dim mi As MethodInfo = f.GetType().GetMethod(
+                    "StopInternalServices",
+                    BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.NonPublic
+                )
                     If mi IsNot Nothing Then mi.Invoke(f, Nothing)
                 Catch
                 End Try
             Next
+
+            Dim sw As New Stopwatch()
+            sw.Start()
+            Do While sw.Elapsed < grace
+                If IsProcessQuiescent() Then
+                    Exit Do
+                End If
+                Await Task.Delay(100)
+            Loop
 
             For Each f As Form In children
                 Try : f.Close() : Catch : End Try
                 Try : f.Dispose() : Catch : End Try
             Next
 
-            Dim sw As New Stopwatch()
-            sw.Start()
-            Do While sw.Elapsed < grace
-                If IsProcessQuiescent() Then Return True
-                Await Task.Delay(100).ConfigureAwait(False)
-            Loop
-
+            Return IsProcessQuiescent()
         Catch ex As Exception
             Try : LogError.writeErr("SafeShutdownAsync error: " & ex.Message) : Catch : End Try
+            Return False
         End Try
-
-        Return False
     End Function
 
     Private Sub StopAllServicesQuiet()
@@ -1417,6 +1461,25 @@ Public Class MDI_FRM
             _isExiting = True
             Me.BeginInvoke(DirectCast(Async Sub() Await SafeShutdownAsync(TimeSpan.FromSeconds(3)), MethodInvoker))
         End If
+    End Sub
+
+    Private Sub ShowCenteredOnScreen(f As Form, owner As Form)
+        Dim scr As Screen = Screen.FromControl(owner)
+        Dim wa As Rectangle = scr.WorkingArea
+
+        Dim x As Integer = wa.Left + (wa.Width - f.Width) \ 2
+        Dim y As Integer = wa.Top + (wa.Height - f.Height) \ 2
+
+        f.StartPosition = FormStartPosition.Manual
+        f.ShowInTaskbar = False
+        f.TopMost = True
+
+        If Not f.Visible Then f.Show(owner)
+
+        f.Location = New Point(x, y)
+        f.BringToFront()
+        Try : f.Activate() : Catch : End Try
+        f.Refresh()
     End Sub
 
     Public Sub Close_EXE()
@@ -1466,17 +1529,32 @@ Public Class MDI_FRM
 #Region "# TIMER & MQTT"
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         Try
-            MDI_DateNow.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("en-GB"))
+            CheckForUpdates()
 
-            If StatusReadPort_.strPort Is Nothing OrElse StatusReadPort_.strPlc Is Nothing Then
-                Exit Sub
-            End If
+            Dim enGB As CultureInfo = CultureInfo.CreateSpecificCulture("en-GB")
+            MDI_DateNow.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss", enGB)
 
-            With StatusReadPort_
-                tstbStatusMqtt.Text = .strPort(0).ToString()
-                tstbStatusPlc.Text = .strPlc.ToString()
-            End With
+            Const connectStatus As String = "Not Response..."
 
+            Dim mqttText As String = connectStatus
+            Dim plcText As String = connectStatus
+
+            Try
+                Dim s As mdlParameter.StatusReadPort = StatusReadPort_
+
+                If s.strPort IsNot Nothing AndAlso s.strPort.Length > 0 Then
+                    Dim v As String = s.strPort(0)
+                    If Not String.IsNullOrWhiteSpace(v) Then mqttText = v
+                End If
+
+                If s.strPlc IsNot Nothing Then
+                    Dim v As String = s.strPlc
+                    If Not String.IsNullOrWhiteSpace(v) Then plcText = v
+                End If
+            Catch : End Try
+
+            tstbStatusMqtt.Text = mqttText
+            tstbStatusPlc.Text = plcText
             tstbUserNameLogin.Text = UserLogon_.UserName
 
             If btn_LOG_ON.Enabled = False Then
@@ -1521,7 +1599,7 @@ Public Class MDI_FRM
 
         Catch ex As Exception
             Try
-                Dim sb As System.Text.StringBuilder = New System.Text.StringBuilder()
+                Dim sb As New System.Text.StringBuilder()
                 sb.AppendLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Error Number: {ex.HResult} [{Me.Name}]")
                 sb.AppendLine($"Exception: {ex.GetType().FullName}")
                 sb.AppendLine($"Message: {ex.Message}")
@@ -1552,6 +1630,449 @@ Public Class MDI_FRM
             tstbMqttHeartbeat.BackColor = Color.Red
             tstbMqttHeartbeat.Text = "MQTT IS NOT ACTIVE"
         End If
+
+        If tstbMqttHeartbeat.Owner IsNot Nothing Then
+            tstbMqttHeartbeat.Owner.Invalidate()
+        End If
+    End Sub
+#End Region
+#Region "# SELF UPDATE"
+    ' ===== Fields =====
+    Private updater As clsSelfUpdate
+    Private _lastUpdateCheck As DateTime = DateTime.MinValue
+    Private _updateAvailable As Boolean = False
+    Private _fsWatcher As FileSystemWatcher
+    Private _isCheckingUpdates As Boolean = False
+    Private _isUpdating As Boolean = False
+    Private _lastFsEvent As DateTime = DateTime.MinValue
+    Private ReadOnly _fsDebounce As TimeSpan = TimeSpan.FromMilliseconds(400)
+
+    Private _latestUpdateInfo As UpdateFileInfo
+    Private _lastButtonState As Boolean = False
+    Private _lastNotifiedUpdateId As String = Nothing
+
+    ' Gate + CTS ป้องกันเด้งซ้อน
+    Private _promptGate As Integer = 0
+    Private _notifyCts As CancellationTokenSource = Nothing
+    Private _lastManualClick As DateTime = DateTime.MinValue
+
+    ' UI readiness + auto-notify flag (atomic)
+    Private _uiReady As Boolean = False
+    Private _shouldAutoNotifyInt As Integer = 0 ' 0 = False, 1 = True
+
+    ' UI state
+    Private _isUpdatePromptOpen As Boolean = False
+    Private _notificationForm As frmUpdateNotification = Nothing
+    Private ReadOnly _notificationLock As New Object()
+
+    ' ===== Models =====
+    Private Class UpdateFileInfo
+        Public Property FileName As String
+        Public Property FileDate As DateTime
+        Public Property FileSize As Long
+        Public Property FilePath As String
+    End Class
+
+    ' ===== Helpers =====
+    Private Function BuildUpdateId(info As UpdateFileInfo) As String
+        If info Is Nothing Then Return Nothing
+        Dim ticks As Long = info.FileDate.ToUniversalTime().ToFileTimeUtc()
+        Return $"{info.FilePath}|{info.FileSize}|{ticks}"
+    End Function
+
+    ' ===== Mark UI Ready (หลังฟอร์มแสดงแล้ว) =====
+    Protected Overrides Sub OnShown(e As EventArgs)
+        MyBase.OnShown(e)
+        _uiReady = True
+    End Sub
+
+    ' ===== Bootstrap =====
+    Private Sub InitializeUpdater()
+        Try
+            updater = New clsSelfUpdate()
+
+            Dim baseShare As String = ConfigurationManager.AppSettings("Share_Location")
+            If Not String.IsNullOrEmpty(baseShare) Then
+                StartUpdateWatcher(baseShare)
+            End If
+
+            Dim delayTask As Task = Task.Delay(3000)
+            Dim continueTask As Task = delayTask.ContinueWith(
+                Sub(_t As Task)
+                    Try
+                        If Me.IsHandleCreated AndAlso Not Me.IsDisposed Then
+                            Me.BeginInvoke(New Action(AddressOf CheckForUpdates))
+                        End If
+                    Catch ex As Exception
+                        Debug.WriteLine($"[UPDATE] InitializeUpdater delayed check error: {ex.Message}")
+                    End Try
+                End Sub)
+        Catch ex As Exception
+            Try : LogError.writeErr("InitializeUpdater: " & ex.Message) : Catch : End Try
+        End Try
+    End Sub
+
+    ' ===== Core Check =====
+    Private Sub CheckForUpdates()
+        Try
+            If _isUpdating OrElse _isCheckingUpdates Then Exit Sub
+            If (DateTime.Now - _lastUpdateCheck) < TimeSpan.FromSeconds(10) Then Exit Sub
+
+            _isCheckingUpdates = True
+            If updater Is Nothing Then updater = New clsSelfUpdate()
+
+            Dim updateFile As String = updater.GetLatestUpdateFile()
+            _updateAvailable = Not String.IsNullOrEmpty(updateFile)
+
+            If _updateAvailable Then
+                Dim fi As New FileInfo(updateFile)
+                _latestUpdateInfo = New UpdateFileInfo With {
+                    .FileName = fi.Name,
+                    .FileDate = fi.LastWriteTime,
+                    .FileSize = fi.Length,
+                    .FilePath = updateFile
+                }
+            Else
+                _latestUpdateInfo = Nothing
+            End If
+
+            _lastUpdateCheck = DateTime.Now
+
+            ' อัปเดต UI ให้เสร็จก่อน (บังคับ sync)
+            If Me.IsHandleCreated AndAlso Me.InvokeRequired Then
+                Me.Invoke(New Action(AddressOf UpdateButtonUI))
+            Else
+                UpdateButtonUI()
+            End If
+
+        Catch ex As Exception
+            _updateAvailable = False
+            _latestUpdateInfo = Nothing
+            If Me.IsHandleCreated AndAlso Me.InvokeRequired Then
+                Me.BeginInvoke(New Action(Sub() btn_UPDATE_SCADA.Enabled = False))
+            Else
+                btn_UPDATE_SCADA.Enabled = False
+            End If
+            Try : LogError.writeErr("CheckForUpdates: " & ex.Message) : Catch : End Try
+        Finally
+            _isCheckingUpdates = False
+
+            ' schedule auto-notify เมื่อ UI พร้อม + ปุ่มพร้อม แล้วจริง ๆ และมีไฟล์
+            If _uiReady AndAlso btn_UPDATE_SCADA.Enabled AndAlso _latestUpdateInfo IsNot Nothing Then
+                If Interlocked.Exchange(_shouldAutoNotifyInt, 0) = 1 Then
+                    ScheduleNotification(autoTriggered:=True, delayMs:=500)
+                End If
+            End If
+        End Try
+    End Sub
+
+    ' ===== UI State =====
+    Private Sub UpdateButtonUI()
+        Try
+            Dim previousState As Boolean = _lastButtonState
+            _lastButtonState = _updateAvailable
+
+            btn_UPDATE_SCADA.Enabled = _updateAvailable
+            btn_UPDATE_SCADA.ToolTipText = If(_updateAvailable, "New update available - Click to update.", "No update available")
+            btn_UPDATE_SCADA.BackColor = If(_updateAvailable, Color.LightGreen, SystemColors.ControlLightLight)
+
+            If _updateAvailable AndAlso Not previousState AndAlso _latestUpdateInfo IsNot Nothing Then
+                Dim newId As String = BuildUpdateId(_latestUpdateInfo)
+                If Not String.Equals(newId, _lastNotifiedUpdateId, StringComparison.OrdinalIgnoreCase) Then
+                    ' set ธงให้ auto-notify แบบ atomic
+                    Interlocked.Exchange(_shouldAutoNotifyInt, 1)
+                End If
+            End If
+        Catch ex As Exception
+            Try : LogError.writeErr("UpdateButtonUI: " & ex.Message) : Catch : End Try
+        End Try
+    End Sub
+
+    ' ===== Scheduler (CTS + Gate + Guards) =====
+    Private Sub ScheduleNotification(autoTriggered As Boolean, delayMs As Integer)
+        Try
+            If _notifyCts IsNot Nothing Then
+                Try : _notifyCts.Cancel() : Catch : End Try
+                Try : _notifyCts.Dispose() : Catch : End Try
+            End If
+
+            ' อย่า schedule ถ้า UI ยังไม่พร้อมหรือปุ่มยังไม่ Enable
+            If Not _uiReady OrElse Not btn_UPDATE_SCADA.Enabled Then Exit Sub ' NOTE: if ToolStripButton use dot, if member name mismatch put correct control ref
+            ' (แก้บรรทัดด้านบนตามชื่อคอนโทรลจริง ๆ ของคุณ)
+        Catch
+            ' ถ้าบรรทัดบนผิดชื่อ ให้ใช้บรรทัดนี้แทน:
+        End Try
+
+        Try
+            If Not _uiReady OrElse Not btn_UPDATE_SCADA.Enabled Then Exit Sub
+            If _isUpdatePromptOpen OrElse Interlocked.CompareExchange(_promptGate, 0, 0) = 1 Then Exit Sub
+
+            _notifyCts = New CancellationTokenSource()
+            Dim tk As CancellationToken = _notifyCts.Token
+
+            Dim delayTask As Task = Task.Delay(delayMs, tk)
+
+            Dim continueTask As Task = delayTask.ContinueWith(
+                Sub(_t As Task)
+                    If tk.IsCancellationRequested Then Return
+                    ' ตรวจอีกครั้งก่อนยิง
+                    If Not _uiReady OrElse Not btn_UPDATE_SCADA.Enabled Then Return
+                    If _isUpdatePromptOpen OrElse Interlocked.CompareExchange(_promptGate, 0, 0) = 1 Then Return
+
+                    If Me.IsHandleCreated AndAlso Not Me.IsDisposed Then
+                        Me.BeginInvoke(New Action(
+                            Sub()
+                                If autoTriggered AndAlso (DateTime.Now - _lastManualClick) < TimeSpan.FromSeconds(2) Then Return
+                                TryOpenNotification(autoTriggered)
+                            End Sub))
+                    End If
+                End Sub,
+                tk,
+                TaskContinuationOptions.None,
+                TaskScheduler.Default
+            )
+        Catch
+            ' TODO: log ถ้าต้องการ
+        End Try
+    End Sub
+
+    ' ===== Notification (single-instance + guard) =====
+    Private Async Sub TryOpenNotification(autoTriggered As Boolean)
+
+        If Not _uiReady OrElse Not btn_UPDATE_SCADA.Enabled Then Return
+        If Interlocked.CompareExchange(_promptGate, 1, 0) <> 0 Then Return
+
+        If _notifyCts IsNot Nothing Then
+            Try : _notifyCts.Cancel() : Catch : End Try
+            Try : _notifyCts.Dispose() : Catch : End Try
+            _notifyCts = Nothing
+        End If
+
+        Dim frm As frmUpdateNotification = Nothing
+
+        Try
+            If _latestUpdateInfo Is Nothing Then Return
+
+            _lastNotifiedUpdateId = BuildUpdateId(_latestUpdateInfo)
+
+            SyncLock _notificationLock
+                If _notificationForm IsNot Nothing AndAlso
+               Not _notificationForm.IsDisposed AndAlso
+               _notificationForm.Visible Then
+                    Return
+                End If
+
+                _isUpdatePromptOpen = True
+                _notificationForm = New frmUpdateNotification()
+                frm = _notificationForm
+            End SyncLock
+
+            frm.SetUpdateInfo(
+            _latestUpdateInfo.FileName,
+            _latestUpdateInfo.FileDate,
+            _latestUpdateInfo.FileSize
+        )
+            AddHandler frm.UpdateRequested,
+                Async Sub(sender As Object, e As EventArgs)
+                    Try
+                        Await PerformUpdateAsync()
+                    Catch ex As Exception
+                        Try : LogError.writeErr("PerformUpdateAsync: " & ex.Message) : Catch : End Try
+                    End Try
+                End Sub
+
+
+            frm.TopMost = True
+            frm.StartPosition = FormStartPosition.CenterScreen
+            frm.Show()
+
+        Catch ex As Exception
+            Try : LogError.writeErr("TryOpenNotification: " & ex.Message) : Catch : End Try
+
+        Finally
+            SyncLock _notificationLock
+                _isUpdatePromptOpen = False
+            End SyncLock
+
+            Interlocked.Exchange(_promptGate, 0)
+        End Try
+    End Sub
+
+    ' ===== Update Button =====
+    Private Sub btn_UPDATE_SCADA_Click(sender As Object, e As EventArgs) Handles btn_UPDATE_SCADA.Click
+        If _isUpdating Then Exit Sub
+        _lastManualClick = DateTime.Now
+
+        If _notifyCts IsNot Nothing Then
+            Try : _notifyCts.Cancel() : Catch : End Try
+        End If
+
+        ' ถ้ากดเอง ให้ยกเลิก auto-notify ที่ค้างอยู่
+        Interlocked.Exchange(_shouldAutoNotifyInt, 0)
+
+        Try
+            If _latestUpdateInfo IsNot Nothing Then
+                TryOpenNotification(False)
+            Else
+                MessageBox.Show(Me, "No update file found.", "Update", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            End If
+        Catch ex As Exception
+            Try : LogError.writeErr("btn_UPDATE_SCADA_Click: " & ex.Message) : Catch : End Try
+            MessageBox.Show(Me, "Unable to show update notification: " & ex.Message, "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
+
+    ' ===== Perform Update =====
+    Private Async Function PerformUpdateAsync() As Task
+        If _isUpdating Then Return
+        _isUpdating = True
+
+        Try
+            btn_UPDATE_SCADA.Enabled = False
+            btn_UPDATE_SCADA.BackColor = SystemColors.ControlLightLight
+
+            If updater Is Nothing Then updater = New clsSelfUpdate()
+            If Not updater.HasPendingUpdate() Then
+                MessageBox.Show(Me, "No update file found.", "Update", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                _isUpdating = False
+                CheckForUpdates()
+                Return
+            End If
+
+            Await updater.StartUpdateAsync(Me)
+
+        Catch ex As Exception
+            Try : LogError.writeErr("PerformUpdateAsync: " & ex.Message) : Catch : End Try
+            MessageBox.Show(Me, "Unable to start the update process: " & ex.Message, "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            _isUpdating = False
+            CheckForUpdates()
+        Finally
+            Debug.WriteLine("[UPDATE] PerformUpdateAsync END")
+        End Try
+    End Function
+
+    ' ===== Watcher =====
+    Private Sub StartUpdateWatcher(baseShare As String)
+        Try
+            Dim updateDir As String = Path.Combine(baseShare, "_Update")
+
+            Dim checkTask As Task(Of Boolean) =
+                Task.Run(Function() Directory.Exists(updateDir))
+
+            If Not checkTask.Wait(3000) OrElse Not checkTask.Result Then
+                Debug.WriteLine("[UPDATE] Cannot access update directory - watcher disabled")
+                Exit Sub
+            End If
+
+            _fsWatcher = New FileSystemWatcher(updateDir, "*.zip") With {
+                .IncludeSubdirectories = False,
+                .NotifyFilter = NotifyFilters.FileName Or NotifyFilters.Size Or NotifyFilters.LastWrite
+            }
+
+            AddHandler _fsWatcher.Created, AddressOf OnUpdateFolderChanged
+            AddHandler _fsWatcher.Changed, AddressOf OnUpdateFolderChanged
+            AddHandler _fsWatcher.Renamed, AddressOf OnUpdateFolderChanged
+            AddHandler _fsWatcher.Deleted, AddressOf OnUpdateFolderChanged
+            AddHandler _fsWatcher.Error, AddressOf OnWatcherError
+
+            _fsWatcher.EnableRaisingEvents = True
+            Debug.WriteLine("[UPDATE] File watcher started")
+        Catch ex As Exception
+            Debug.WriteLine("[UPDATE] StartUpdateWatcher failed: " & ex.Message)
+            Try : LogError.writeErr("StartUpdateWatcher: " & ex.Message) : Catch : End Try
+        End Try
+    End Sub
+
+    Private Sub OnWatcherError(sender As Object, e As ErrorEventArgs)
+        Try
+            Debug.WriteLine("[UPDATE] Watcher error: " & e.GetException()?.Message)
+            If _fsWatcher IsNot Nothing Then _fsWatcher.EnableRaisingEvents = False
+
+            If Me.IsHandleCreated Then
+                Me.BeginInvoke(New Action(
+                    Sub()
+                        Dim delayTask As Task = Task.Delay(10000)
+                        Dim continueTask As Task = delayTask.ContinueWith(
+                            Sub(_t As Task)
+                                Try
+                                    Dim baseShare As String = ConfigurationManager.AppSettings("Share_Location")
+                                    If Not String.IsNullOrEmpty(baseShare) Then
+                                        StartUpdateWatcher(baseShare)
+                                    End If
+                                Catch
+                                End Try
+                            End Sub)
+                    End Sub))
+            End If
+        Catch
+        End Try
+    End Sub
+
+    Private Sub OnUpdateFolderChanged(sender As Object, e As FileSystemEventArgs)
+        Try
+            If _isUpdating Then Exit Sub
+            Dim now As DateTime = DateTime.Now
+            If (now - _lastFsEvent) < _fsDebounce Then Exit Sub
+            _lastFsEvent = now
+
+            If Me.IsHandleCreated Then
+                Me.BeginInvoke(New Action(
+                    Sub()
+                        _lastUpdateCheck = DateTime.MinValue
+                        CheckForUpdates()
+                    End Sub))
+            End If
+        Catch ex As Exception
+            Debug.WriteLine("[UPDATE] OnUpdateFolderChanged error: " & ex.Message)
+        End Try
+    End Sub
+
+    ' ===== Public API =====
+    Private Sub RefreshUpdateButtonState()
+        Try
+            If updater Is Nothing Then updater = New clsSelfUpdate()
+            _lastUpdateCheck = DateTime.MinValue
+            CheckForUpdates()
+        Catch
+            btn_UPDATE_SCADA.Enabled = False
+        End Try
+    End Sub
+
+    ' ===== Cleanup =====
+    Protected Overrides Sub OnFormClosing(e As FormClosingEventArgs)
+        Try
+            If _notifyCts IsNot Nothing Then
+                Try : _notifyCts.Cancel() : Catch : End Try
+                Try : _notifyCts.Dispose() : Catch : End Try
+                _notifyCts = Nothing
+            End If
+
+            If _fsWatcher IsNot Nothing Then
+                _fsWatcher.EnableRaisingEvents = False
+                RemoveHandler _fsWatcher.Created, AddressOf OnUpdateFolderChanged
+                RemoveHandler _fsWatcher.Changed, AddressOf OnUpdateFolderChanged
+                RemoveHandler _fsWatcher.Renamed, AddressOf OnUpdateFolderChanged
+                RemoveHandler _fsWatcher.Deleted, AddressOf OnUpdateFolderChanged
+                RemoveHandler _fsWatcher.Error, AddressOf OnWatcherError
+                _fsWatcher.Dispose()
+                _fsWatcher = Nothing
+            End If
+
+            SyncLock _notificationLock
+                If _notificationForm IsNot Nothing AndAlso Not _notificationForm.IsDisposed Then
+                    _notificationForm.Close()
+                    _notificationForm = Nothing
+                End If
+                _isUpdatePromptOpen = False
+            End SyncLock
+
+            Interlocked.Exchange(_promptGate, 0)
+
+        Catch ex As Exception
+            Debug.WriteLine($"[UPDATE] OnFormClosing cleanup error: {ex.Message}")
+        End Try
+
+        MyBase.OnFormClosing(e)
     End Sub
 #End Region
 
@@ -1623,7 +2144,6 @@ Public Class MDI_FRM
             'io.CloseEXE("TAT01_HANDADD_1_PARAMETER_ALARM_HANDADD")
             'io.CloseEXE("TAT01_LIQUID_1_PARAMETER_ALARM_LIQUID")
             'io.CloseEXE("TAT01_LIQUID_2_PARAMETER_ALARM_LIQUID")
-            If frmAlarm_Des_New IsNot Nothing Then frmAlarm_Des_New.Close()
         Catch ex As Exception
             Try : LogError.writeErr("Custom Close App: " & ex.Message) : Catch : End Try
         End Try

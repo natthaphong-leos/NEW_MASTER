@@ -774,12 +774,53 @@ Public Class frm_Page_1
     ' ================================================================================
 
     Public Sub FunctionWithTimer()
-        ' WRITE YOUR CODE HERE
+        'WRITE SOME FUNCTION HERE
+        'Alarm_TempBKE_M1106()
+        'Alarm_TempBKE_M1116()
+        'Alarm_TempBKE_MCC09()
+        'Alarm_TempBKE_M1126()
+        'Alarm_TempBKE_M2301()
     End Sub
 
     Private Sub Show_Line()
-        ' WRITE YOUR CODE HERE
+        'WRITE SOME FUNCTION HERE
     End Sub
+
+    '============== For Show / Hide Alarm Label =================
+    Private Sub ApplyStatus(lbl As Label, defaultColor As Color, ParamArray statusOrder() As Boolean)
+        Dim target As Color
+        If statusOrder.Length > 0 AndAlso statusOrder(0) Then
+            target = Color.Red
+        ElseIf statusOrder.Length > 1 AndAlso statusOrder(1) Then
+            target = Color.Orange
+        ElseIf statusOrder.Length > 2 AndAlso statusOrder(2) Then
+            target = Color.Blue
+        Else
+            target = defaultColor
+        End If
+
+        If lbl.BackColor <> target Then
+            SetBackColorSafe(lbl, target)
+            If lbl.ForeColor <> Color.White Then SetForeColorSafe(lbl, Color.White)
+        End If
+    End Sub
+
+    Private Sub SetBackColorSafe(lbl As Label, c As Color)
+        If lbl.InvokeRequired Then
+            lbl.BeginInvoke(Sub() lbl.BackColor = c)
+        Else
+            lbl.BackColor = c
+        End If
+    End Sub
+
+    Private Sub SetForeColorSafe(lbl As Label, c As Color)
+        If lbl.InvokeRequired Then
+            lbl.BeginInvoke(Sub() lbl.ForeColor = c)
+        Else
+            lbl.ForeColor = c
+        End If
+    End Sub
+
 #End Region
 
 End Class

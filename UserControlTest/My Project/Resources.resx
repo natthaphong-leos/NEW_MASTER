@@ -121,14 +121,11 @@
   <data name="BG_MainScada" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\BG_MainScada.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SYS_MDI_MotorCode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SYS_MDI_MotorCode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="UI_PageSetup_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_PageSetup_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UI_GaugeStyleLinearHorizontal_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_GaugeStyleLinearHorizontal_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SYS_MDI_Exit" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SYS_MDI_Exit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UI_LoginPassword_30x30" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_LoginPassword_30x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -157,11 +154,11 @@
   <data name="SYS_MDI_Extend" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SYS_MDI_Extend.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="SYS_MDI_Update" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SYS_MDI_Update.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="UI_Delete_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_Delete_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UI_PageSetup_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_PageSetup_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UI_SetRedToBlack_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_SetRedToBlack_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -177,6 +174,12 @@
   </data>
   <data name="SYS_WarningTriangle" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SYS_WarningTriangle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SYS_MDI_ProductionTime" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SYS_MDI_ProductionTime.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SYS_MDI_MotorCode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SYS_MDI_MotorCode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UI_Play_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_Play_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -211,11 +214,14 @@
   <data name="UI_Stop_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_Stop_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="UI_EyeClose_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UI_EyeClose_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="SYS_MDI_JobAssgnment" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SYS_MDI_JobAssgnment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SYS_MDI_ProductionTime" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SYS_MDI_ProductionTime.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="SYS_MDI_Exit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SYS_MDI_Exit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UI_EyeOpen_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_EyeOpen_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -252,8 +258,5 @@
   </data>
   <data name="UI_TouchMode_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UI_TouchMode_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UI_EyeClose_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UI_EyeClose_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

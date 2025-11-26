@@ -281,6 +281,12 @@ Public Class frm_login
 
             ' 6) PERMISSION OF MDI_FRM
             Try
+                With UserLogon_
+                    .UserCode = dev_operator_code
+                    .UserName = dev_operator_name
+                    .EmployeeId = dev_employee
+                End With
+
                 Dim mdi = MDI_FRM.Current()
                 If mdi IsNot Nothing Then
                     mdi.ApplyPermissions(

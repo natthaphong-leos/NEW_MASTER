@@ -92,6 +92,7 @@ Partial Class MDI_FRM
         Me.ToolStripSeparator13 = New System.Windows.Forms.ToolStripSeparator()
         Me.ToolStrip_Top = New System.Windows.Forms.ToolStrip()
         Me.btnPage_2 = New System.Windows.Forms.ToolStripButton()
+        Me.btn_UPDATE_SCADA = New System.Windows.Forms.ToolStripButton()
         Me.ToolStripLabel1 = New System.Windows.Forms.ToolStripLabel()
         Me.tsCboLanguage = New System.Windows.Forms.ToolStripComboBox()
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
@@ -408,6 +409,7 @@ Partial Class MDI_FRM
         '
         'btnPage_1
         '
+        Me.btnPage_1.AutoSize = False
         Me.btnPage_1.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnPage_1.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnPage_1.ForeColor = System.Drawing.Color.Black
@@ -416,8 +418,8 @@ Partial Class MDI_FRM
         Me.btnPage_1.ImageTransparentColor = System.Drawing.Color.Black
         Me.btnPage_1.Name = "btnPage_1"
         Me.btnPage_1.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
-        Me.btnPage_1.Size = New System.Drawing.Size(96, 47)
-        Me.btnPage_1.Text = "FROM PAGE 1"
+        Me.btnPage_1.Size = New System.Drawing.Size(120, 47)
+        Me.btnPage_1.Text = "GRAIN SILO"
         Me.btnPage_1.TextAlign = System.Drawing.ContentAlignment.BottomCenter
         Me.btnPage_1.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay
         '
@@ -646,7 +648,7 @@ Partial Class MDI_FRM
         Me.ToolStrip_Top.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden
         Me.ToolStrip_Top.ImageScalingSize = New System.Drawing.Size(20, 20)
         Me.ToolStrip_Top.ImeMode = System.Windows.Forms.ImeMode.NoControl
-        Me.ToolStrip_Top.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btnPage_1, Me.btnPage_2, Me.ToolStripSeparator9, Me.btn_JOB_ASSIGNMENT, Me.ToolStripSeparator11, Me.ToolStripDropDownButton1, Me.btn_Show_bin_code, Me.btn_Show_Code, Me.btn_PRODUCTION_TIME, Me.btnExtend, Me.btn_Refresh, Me.ToolStripSeparator12, Me.btn_LOG_ON, Me.btn_LOG_OFF, Me.btn_exit, Me.ToolStripSeparator10, Me.ToolStripLabel1, Me.tsCboLanguage, Me.ToolStripSeparator13})
+        Me.ToolStrip_Top.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btnPage_1, Me.btnPage_2, Me.ToolStripSeparator9, Me.btn_JOB_ASSIGNMENT, Me.ToolStripSeparator11, Me.ToolStripDropDownButton1, Me.btn_Show_bin_code, Me.btn_Show_Code, Me.btn_PRODUCTION_TIME, Me.btnExtend, Me.btn_Refresh, Me.ToolStripSeparator12, Me.btn_LOG_ON, Me.btn_LOG_OFF, Me.btn_UPDATE_SCADA, Me.btn_exit, Me.ToolStripSeparator10, Me.ToolStripLabel1, Me.tsCboLanguage, Me.ToolStripSeparator13})
         Me.ToolStrip_Top.Location = New System.Drawing.Point(0, 0)
         Me.ToolStrip_Top.Margin = New System.Windows.Forms.Padding(10)
         Me.ToolStrip_Top.Name = "ToolStrip_Top"
@@ -671,6 +673,23 @@ Partial Class MDI_FRM
         Me.btnPage_2.Text = "FROM PAGE 2"
         Me.btnPage_2.TextAlign = System.Drawing.ContentAlignment.BottomCenter
         Me.btnPage_2.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay
+        Me.btnPage_2.Visible = False
+        '
+        'btn_UPDATE_SCADA
+        '
+        Me.btn_UPDATE_SCADA.AutoSize = False
+        Me.btn_UPDATE_SCADA.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Me.btn_UPDATE_SCADA.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btn_UPDATE_SCADA.ForeColor = System.Drawing.Color.Black
+        Me.btn_UPDATE_SCADA.Image = Global.Project.My.Resources.Resources.SYS_MDI_Update
+        Me.btn_UPDATE_SCADA.ImageAlign = System.Drawing.ContentAlignment.TopCenter
+        Me.btn_UPDATE_SCADA.ImageTransparentColor = System.Drawing.Color.Black
+        Me.btn_UPDATE_SCADA.Name = "btn_UPDATE_SCADA"
+        Me.btn_UPDATE_SCADA.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
+        Me.btn_UPDATE_SCADA.Size = New System.Drawing.Size(80, 47)
+        Me.btn_UPDATE_SCADA.Text = "UPDATE"
+        Me.btn_UPDATE_SCADA.TextAlign = System.Drawing.ContentAlignment.BottomCenter
+        Me.btn_UPDATE_SCADA.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay
         '
         'ToolStripLabel1
         '
@@ -891,4 +910,5 @@ Partial Class MDI_FRM
     Friend WithEvents ToolStripMenuItem2 As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem3 As ToolStripMenuItem
     Friend WithEvents btnPage_2 As ToolStripButton
+    Friend WithEvents btn_UPDATE_SCADA As ToolStripButton
 End Class

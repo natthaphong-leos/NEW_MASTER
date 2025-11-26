@@ -158,7 +158,7 @@ Partial Class frm_Page_1
         Me.pnlLine.Controls.Add(Me.btnDrawLine)
         Me.pnlLine.Controls.Add(Me.btnHide_Control)
         Me.pnlLine.Font = New System.Drawing.Font("Tahoma", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.pnlLine.Location = New System.Drawing.Point(1064, 10)
+        Me.pnlLine.Location = New System.Drawing.Point(1065, 10)
         Me.pnlLine.Name = "pnlLine"
         Me.pnlLine.Size = New System.Drawing.Size(699, 105)
         Me.pnlLine.TabIndex = 27300
@@ -297,7 +297,6 @@ Partial Class frm_Page_1
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.DimGray
-        Me.BackgroundImage = Global.Project.My.Resources.Resources.BG_MainScada
         Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
         Me.ClientSize = New System.Drawing.Size(1920, 1061)
         Me.Controls.Add(Me.pnlLine)

@@ -802,7 +802,8 @@ Retry_PLC:
             If ctrlSelect_tmp.mqtt_selectmode_config_.M_HOLD <> "M0" And ctrlSelect_tmp.mqtt_selectmode_config_.M_HOLD.Length <> 0 Then
                 menu_Frm.Items("mnuSelect_Hold").Visible = True
                 AddHandler menu_Frm.Items("mnuSelect_Hold").Click, AddressOf mnuSelectHold_Click
-                If InStr(ctrlSelect_tmp.mqtt_selectmode_config_.CODE, "AUTO/MAN") > 0 Then
+                If InStr(ctrlSelect_tmp.mqtt_selectmode_config_.CODE, "AUTO/MAN") > 0 Or
+                    InStr(ctrlSelect_tmp.mqtt_selectmode_config_.CODE, "INLINE") > 0 Then
                     If .STA_HOLD = True Then
                         menu_Frm.Items("mnuSelect_Hold").Text = "BY PASS"
                     Else

@@ -6,7 +6,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyTitle("SCADA SYSTEM")>
 <Assembly: AssemblyDescription("Supervisory Control and Data Acquisition System for Feed Mill Automation")>
 <Assembly: AssemblyCompany("TAT ENERGY AND ENGINEERING CO., LTD.")>
-<Assembly: AssemblyProduct("SCADA MASTER")>         '<<< PRODUCTION NAME
+<Assembly: AssemblyProduct("SCADA MASTER SYSTEM")>         '<<< PRODUCTION NAME
 <Assembly: AssemblyTrademark("SMART BATCHING")>
 <Assembly: AssemblyCulture("")>
 <Assembly: AssemblyCopyright("Copyright © TAT ENERGY AND ENGINEERING CO., LTD. 2025")>
