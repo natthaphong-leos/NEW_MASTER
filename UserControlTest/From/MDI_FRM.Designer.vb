@@ -419,7 +419,7 @@ Partial Class MDI_FRM
         Me.btnPage_1.Name = "btnPage_1"
         Me.btnPage_1.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
         Me.btnPage_1.Size = New System.Drawing.Size(120, 47)
-        Me.btnPage_1.Text = "GRAIN SILO"
+        Me.btnPage_1.Text = "FROM PAGE 1"
         Me.btnPage_1.TextAlign = System.Drawing.ContentAlignment.BottomCenter
         Me.btnPage_1.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay
         '
@@ -673,7 +673,6 @@ Partial Class MDI_FRM
         Me.btnPage_2.Text = "FROM PAGE 2"
         Me.btnPage_2.TextAlign = System.Drawing.ContentAlignment.BottomCenter
         Me.btnPage_2.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay
-        Me.btnPage_2.Visible = False
         '
         'btn_UPDATE_SCADA
         '
